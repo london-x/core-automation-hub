@@ -43,7 +43,9 @@ This repository is still under development and will be updated.
 
 # 🛰️ main.py
 
-High-load CLI controller and persistent database snapshot manager for main.py with zero external dependencies. Features single-letter atomic RAM arrays, strict validation, batch token scanning, and transaction rollback engine.
+High-load CLI controller and persistent database snapshot manager for main.py with zero external dependencies. Features single-letter atomic RAM arrays, strict validation, 4-mode array filtering, batch token scanning, and transaction rollback engine.
+
+This repository is under development and will be updated.
 
 ---
 
@@ -54,7 +56,7 @@ Insert any series of data tokens, integers, or fractional values directly into t
 ```bash
 python main.py -add data1 data2 4.22 -hz
 ```
-*Security note: Empty strings or blank spaces trigger an internal `IndexError` via `raise`, instantly blocking bad data writes to the SSD.*
+*Security note: Empty inputs inside quotes trigger an internal `IndexError` via `raise`, instantly blocking bad data writes to the SSD.*
 
 ### 2. Batch Search (Read Mode)
 Parallel scan for query matches or pull precise database cells using 1-based human indexing:
@@ -63,27 +65,19 @@ python main.py -search data1 3
 ```
 
 ### 3. Surgical Data Pruning (Wipe Mode)
+* **Wipe entire storage database array to zero:** `python main.py -del all`
+* **Remove cell via index position:** `python main.py -del cell 2`
+* **Eradicate word duplicate entries:** `python main.py -del word data1`
+* **Slice values from the start sequence:** `python main.py -del cut_start 3`
+* **Slice values from the end sequence:** `python main.py -del cut_end 2`
 
-* **Wipe entire storage database array to zero:**
-  ```bash
-  python main.py -del all
-  ```
-* **Remove specific target cell via human index position:**
-  ```bash
-  python main.py -del cell 2
-  ```
-* **Eradicate all duplicate entries matching a word pattern:**
-  ```bash
-  python main.py -del word data1
-  ```
-* **Slice fixed number of values from the start sequence:**
-  ```bash
-  python main.py -del cut_start 3
-  ```
-* **Slice fixed number of values from the end sequence:**
-  ```bash
-  python main.py -del cut_end 2
-  ```
+### 4. Token List Generator (Export Mode)
+Generate highly-formatted string array outputs wrapped in brackets `[]` and quotes `""`:
+* **Output all words from database:** `python main.py -list all`
+* **Filter and output targeted list of specific words:** `python main.py -list target data1 data2`
+* **Generate array list of N items from the start:** `python main.py -list start 5`
+* **Generate array list of N items from the end:** `python main.py -list end 3`
+*Outputs are printed to console and automatically exported to `list_output.json` for external Excel parsing tools.*
 
 ---
 
