@@ -206,11 +206,11 @@ if __name__ == "__main__":
             else:
                 raise KeyError
 
-                except (IndexError, ValueError, KeyError, Exception):
-                    print("CRITICAL: LOGIC OR INDEX ERROR DETECTED!")
-                    print("TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
-                    l = b.copy()
-                    print(f"TOTAL_STORAGE_RESTORED: {len(l)}")
+        except (IndexError, ValueError, KeyError, Exception):
+            print("CRITICAL: LOGIC OR INDEX ERROR DETECTED!")
+            print("TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
+            l = b.copy()
+            print(f"TOTAL_STORAGE_RESTORED: {len(l)}")
 
-                with open("db.json", "w", encoding="utf-8") as f:
-                    json.dump(l, f, ensure_ascii=False, indent=4)
+        with open("db.json", "w", encoding="utf-8") as f:
+            json.dump(l, f, ensure_ascii=False, indent=4)
