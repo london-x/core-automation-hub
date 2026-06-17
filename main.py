@@ -48,7 +48,13 @@ if __name__ == "__main__":
             if u == "-add":
                 d = a[2].strip() if len(a) > 2 else ""
                 
-                if d == "range" and len(a) > 4:
+            def parse(v):
+                    try: return int(v)
+                    except ValueError:
+                        try: return float(v)
+                        except ValueError: return v
+                            
+            if d == "range" and len(a) > 4:
                     h = int(a[3]) - 1
                     if h < 0 or h > len(l):
                         raise IndexError
