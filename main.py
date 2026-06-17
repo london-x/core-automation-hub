@@ -3,7 +3,7 @@ import json
 
 if __name__ == "__main__":
     """
-    🛰️ CORE AUTOMATION HUB & MULTI-MODE 4-FUNCTION RECOVERY STORAGE
+    CORE AUTOMATION HUB & MULTI-MODE 4-FUNCTION RECOVERY STORAGE
     
     DECODING ATOMIC VARIABLES ON THE RAM BOARD:
     -----------------------------------------------------
@@ -145,8 +145,8 @@ if __name__ == "__main__":
                 raise KeyError
 
         except (IndexError, ValueError, KeyError, Exception):
-            print("🚨 CRITICAL: LOGIC OR INDEX ERROR DETECTED!")
-            print("🛡️ TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
+            print("CRITICAL: LOGIC OR INDEX ERROR DETECTED!")
+            print("TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
             l = b.copy()
             print(f"TOTAL_STORAGE_RESTORED: {len(l)}")
 
