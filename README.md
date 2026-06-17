@@ -43,44 +43,49 @@ This repository is still under development and will be updated.
 
 # 🛰️ main.py
 
-All-in-One high-load CLI automation platform and server combiner. Includes persistent JSON database core with strict data pruning.
+High-load CLI controller and persistent database snapshot manager for main.py with zero external dependencies. Features single-letter atomic RAM arrays, strict validation, batch token scanning, and transaction rollback engine.
 
 ---
 
 ## 🚀 HOW TO USE
 
 ### 1. Append Memory Cells (Write Mode)
-Insert any number of data chunks or words into the persistent database storage:
+Insert any series of data tokens, integers, or fractional values directly into the database:
 ```bash
-python main.py -add data1 data2 data3 word4
+python main.py -add data1 data2 4.22 -hz
 ```
-*System will automatically display `CREATED_NOW` count and `TOTAL_STORAGE` capacity.*
+*Security note: Empty strings or blank spaces trigger an internal `IndexError` via `raise`, instantly blocking bad data writes to the SSD.*
 
 ### 2. Batch Search (Read Mode)
-Scan the storage parallelly for words or query human indexes (starting from 1) without touching the hard drive:
+Parallel scan for query matches or pull precise database cells using 1-based human indexing:
 ```bash
-python main.py -search word4 2
+python main.py -search data1 3
 ```
 
-### 3. Data Pruning & Surgical Deletion (Wipe Mode)
+### 3. Surgical Data Pruning (Wipe Mode)
 
-* **Wipe everything to absolute zero:**
+* **Wipe entire storage database array to zero:**
   ```bash
   python main.py -del all
   ```
-* **Remove specific cell by human index number:**
+* **Remove specific target cell via human index position:**
   ```bash
   python main.py -del cell 2
   ```
-* **Purge all existing duplicates of a targeted word:**
+* **Eradicate all duplicate entries matching a word pattern:**
   ```bash
   python main.py -del word data1
   ```
-* **Slice fixed number of cells from the start:**
+* **Slice fixed number of values from the start sequence:**
   ```bash
   python main.py -del cut_start 3
   ```
-* **Slice fixed number of cells from the end:**
+* **Slice fixed number of values from the end sequence:**
   ```bash
   python main.py -del cut_end 2
   ```
+
+---
+
+## 🛡️ CORE TRANSACTION ROLLBACK
+Any unexpected indexing overflow, data type clash, or sub-flag error during execution triggers a safe exception route. The controller drops the corrupted transaction and restores the memory state array directly from the original RAM backup clone.
