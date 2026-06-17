@@ -41,45 +41,105 @@ This repository is still under development and will be updated.
         │  • Фиксация аналитики и выгрузка напрямую в EXCEL   │
         └─────────────────────────────────────────────────────┘
 
-# 🛰️ main.py
+# 🛰️ РУКОВОДСТВО ПО ЭКСПЛУАТАЦИИ: CLI-КОНТРОЛЛЕР И СУБД (main.py)
 
-High-load CLI controller and persistent database snapshot manager for main.py with zero external dependencies. Features single-letter atomic RAM arrays, strict validation, 4-mode array filtering, batch token scanning, and transaction rollback engine.
+Высокопроизводительный консольный контроллер и менеджер снимков базы данных со сквозной валидацией диапазонов, пакетным сканированием и встроенным движком транзакционного отката (Rollback Engine). Утилита написана на чистом Python 3 без внешних зависимостей, оптимизирована под минимальное потребление RAM и использует атомарные однобуквенные переменные в оперативной памяти. Данные перманентно запечатываются в локальный JSON-саркофаг `db.json` на SSD.
 
-This repository is under development and will be updated.
-
----
-
-## 🚀 HOW TO USE
-
-### 1. Append Memory Cells (Write Mode)
-Insert any series of data tokens, integers, or fractional values directly into the database:
-```bash
-python main.py -add data1 data2 4.22 -hz
-```
-*Security note: Empty inputs inside quotes trigger an internal `IndexError` via `raise`, instantly blocking bad data writes to the SSD.*
-
-### 2. Batch Search (Read Mode)
-Parallel scan for query matches or pull precise database cells using 1-based human indexing:
-```bash
-python main.py -search data1 3
-```
-
-### 3. Surgical Data Pruning (Wipe Mode)
-* **Wipe entire storage database array to zero:** `python main.py -del all`
-* **Remove cell via index position:** `python main.py -del cell 2`
-* **Eradicate word duplicate entries:** `python main.py -del word data1`
-* **Slice values from the start sequence:** `python main.py -del cut_start 3`
-* **Slice values from the end sequence:** `python main.py -del cut_end 2`
-
-### 4. Token List Generator (Export Mode)
-Generate highly-formatted string array outputs wrapped in brackets `[]` and quotes `""`:
-* **Output all words from database:** `python main.py -list all`
-* **Filter and output targeted list of specific words:** `python main.py -list target data1 data2`
-* **Generate array list of N items from the start:** `python main.py -list start 5`
-* **Generate array list of N items from the end:** `python main.py -list end 3`
-*Outputs are printed to console and automatically exported to `list_output.json` for external Excel parsing tools.*
+В систему встроен прецизионный аппаратный профайлер (`time.perf_counter`), который при завершении любой операции выводит в консоль точное время выполнения в миллисекундах.
 
 ---
 
-## 🛡️ CORE TRANSACTION ROLLBACK
-Any unexpected indexing overflow, data type clash, or sub-flag error during execution triggers a safe exception route. The controller drops the corrupted transaction and restores the memory state array directly from the original RAM backup clone.
+## 📥 РЕЖИМ 1: ПОПОЛНЕНИЕ ПАМЯТИ И ВСТАВКА ДАННЫХ (`-add`)
+
+Служит для засасывания и сохранения любых текстовых токенов, целых идентификаторов или дробных физических метрик в базу данных.
+
+*   **Глобальное добавление в хвост массива:**
+    ```bash
+    python main.py -add token1 token2 99.4 4.22
+    ```
+*   **Хирургическая вставка диапазона (`range`) в произвольную точку:**
+    Разрезает текущий массив в RAM и внедряет новые элементы строго на указанную позицию человеческого индекса (начиная с 1), сдвигая последующие данные вправо. Команда вставить токены на позицию №3:
+    ```bash
+    python main.py -add range 3 new_cell_1 new_cell_2
+    ```
+*   **Контроль периметра ввода:** Если попытаться отправить пустой ввод в кавычках (`python main.py -add "   "`), генератор списков очистит пробелы методом `.strip()`, полезная длина `n` станет равна `0`, и внутренний детонатор `raise IndexError` принудительно заблокирует запись мусора на SSD, инициировав Rollback.
+
+---
+
+## 🛰️ РЕЖИМ 2: ПАКЕТНЫЙ ИНТЕЛЛЕКТУАЛЬНЫЙ РАДАР ПОИСКА (`-search`)
+
+Служит для высокоскоростного пакетного сканирования и чтения данных в RAM в режиме стерильного доступа без мутации исходного JSON-файла.
+
+*   **Глобальный поиск по базе (Слова и Индексы параллельно):**
+    ```bash
+    python main.py -search query_word 3 target_token
+    ```
+    *   Чистые целые числа (например, `3`) распознаются как прямой запрос ячейки. Программа автоматически сдвигает человеческую координату на такт назад в памяти (`l[h - 1]`) и пулей выводит значение третьей строки.
+    *   Буквенные слова перехватываются капканом `ValueError` и перенаправляются в нано-сканер `enumerate`, который за доли миллисекунды вычисляет точные сквозные адреса (номера строк) всех дубликатов и их общее количество (`TOTAL_COUNT`).
+*   **Экранирование числовых строк (Текстовый маркер `w`):**
+    Если необходимо найти строку, состоящую исключительно из цифр (например, телефонный код, ID объекта или числовой хэш `495`) именно как текстовое слово, а не как номер строки, перед запросом ставится маркер `w`. Алгоритм откусит префикс и пустит цифры напрямую по текстовому рельсу, обходя вылет за границы индексов:
+    ```bash
+    python main.py -search w495
+    ```
+*   **Ограниченный поиск внутри выделенного диапазона ячеек (`range`):**
+    Сужает луч сканирования. Ищет совпадения и выводит координаты дубликатов строго внутри указанного окна индексов (например, со 1-й по 10-ю ячейку), полностью игнорируя остальной массив данных:
+    ```bash
+    python main.py -search range 1 10 query_word w495
+    ```
+
+---
+
+## 🪓 РЕЖИМ 3: ХИРУРГИЧЕСКОЕ ВЫЖИГАНИЕ И ЗАЧИСТКА МУСОРА (`-del`)
+
+Рычаг управления лимитами жесткого диска. Служит для точечного или массового удаления элементов.
+
+*   **Сброс всего накопительного хранилища под абсолютный ноль:**
+    ```bash
+    python main.py -del all
+    ```
+*   **Удаление одной конкретной ячейки по её человеческому номеру (например, строка №2):**
+    ```bash
+    python main.py -del cell 2
+    ```
+*   **Массовое удаление всех существующих дубликатов слова по совпадению:**
+    Использует фильтрующий генератор списков с оператором `!=`, начисто вырезая мишень из базы:
+    ```bash
+    python main.py -del word query_word
+    ```
+*   **Уничтожение выделенного диапазона ячеек из середины базы (например, с 5-й по 8-ю строки):**
+    Склеивает неизменяемые куски базы до и после указанных границ (`l[:x] + l[y:]`), утилизируя промежуток:
+    ```bash
+    python main.py -del range 5 8
+    ```
+
+---
+
+## 📊 РЕЖИМ 4: ФИЛЬТРАЦИЯ, ЭКСПОРТ И АНАЛИТИКА МЕТРИК (`-list`)
+
+Генерирует высокоформатированные списки строк, обёрнутые в квадратные скобки `[]` и кавычки `""`, выводя их на экран и автоматически дублируя чистый результат в файл `list_output.json` на SSD для внешних инструментов автоматизации или Excel.
+
+*   **Выборка определенных существующих слов из поезда запросов:**
+    Программа сопоставляет входящие токены с базой данных и выводит списком только те элементы, которые реально присутствуют в памяти:
+    ```bash
+    python main.py -list target token1 token2 fake_token
+    ```
+*   **Генерация массива из выделенного диапазона ячеек (например, с 3-й по 7-ю строки):**
+    Выхватывает изолированный срез данных из середины базы:
+    ```bash
+    python main.py -list range 3 7
+    ```
+*   **Тотальная инфраструктурная аналитика и аудит базы (`stats`):**
+    Просвечивает массив данных через схлопыватель дубликатов `set(l)`, вычисляет уникальные токены и выводит зрячую коммерческую сводку: общий объём, число уникальных записей, количество дубликатов и точный процент замусоренности хранилища:
+    ```bash
+    python main.py -list stats
+    ```
+
+---
+
+## 🛡️ СИСТЕМА АВТОМАТИЧЕСКОГО ОТКАТА (TRANSACTION ROLLBACK)
+
+Архитектура контроллера спроектирована по стандартам отказоустойчивости Mission-Critical систем. Перед выполнением любой операции в RAM создается изолированный резервный слепок базы `b = l.copy()`. 
+
+Если во время записи, удаления, пакетного поиска или урезки диапазонов `range` происходит непредвиденный индексный оверфлоу (вылет за границы реальной длины массива), конфликт типов данных (ввод букв вместо чисел) или сбой суб-флага, программа **не падает в розовый краш**. 
+
+Глобальный объединенный капкан `except (IndexError, ValueError, KeyError, Exception)` мгновенно перехватывает системный удар, блокирует запись испорченной или пустой RAM-структуры на жесткий диск, прерывает транзакцию и принудительно восстанавливает всю память из чистого стартового слепка `b`. Локальный файл `db.json` всегда остается в физической безопасности и стабильности.
