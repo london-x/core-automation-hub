@@ -214,3 +214,7 @@ if __name__ == "__main__":
 
         with open("db.json", "w", encoding="utf-8") as f:
             json.dump(l, f, ensure_ascii=False, indent=4)
+            z = time.perf_counter()
+            v = round((z-t) * 1000, 4)
+            print(f"PERFORMANCE_BENCHMARK: {v} ms")
+            
