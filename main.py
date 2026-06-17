@@ -48,24 +48,24 @@ if __name__ == "__main__":
             if u == "-add":
                 d = a[2].strip() if len(a) > 2 else ""
                 
-            def parse(v):
+                def parse(v):
                     try: return int(v)
                     except ValueError:
                         try: return float(v)
                         except ValueError: return v
-                            
-            if d == "range" and len(a) > 4:
+
+                if d == "range" and len(a) > 4:
                     h = int(a[3]) - 1
                     if h < 0 or h > len(l):
                         raise IndexError
-                    s = [m.strip() for m in a[4:] if m.strip()]
+                    s = [parse(m.strip()) for m in a[4:] if m.strip()]
                     if not s:
                         raise IndexError
                     l = l[:h] + s + l[h:]
                     print(f"SUCCESS: INSERTED {len(s)} CELLS AT POSITION {h + 1}")
                 else:
                     k = a[2:] if d != "range" else a[4:]
-                    s = [m.strip() for m in k if m.strip()]
+                    s = [parse(m.strip()) for m in k if m.strip()]
                     n = len(s)
                     if n == 0:
                         raise IndexError
@@ -220,6 +220,7 @@ if __name__ == "__main__":
 
         with open("db.json", "w", encoding="utf-8") as f:
             json.dump(l, f, ensure_ascii=False, indent=4)
-            z = time.perf_counter()
-            v = round((z-t) * 1000, 4)
-            print(f"PERFORMANCE_BENCHMARK: {v} ms")
+
+    z = time.perf_counter()
+    v = round((z - t) * 1000, 4)
+    print(f"PERFORMANCE_BENCHMARK: {v} ms")
