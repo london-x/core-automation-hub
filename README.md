@@ -3,143 +3,105 @@ All-in-One high-load CLI automation platform and server combiner. Includes persi
 
 This repository is still under development and will be updated.
 
- 🛰️ [CORE-AUTOMATION-HUB]: ГЛОБАЛЬНАЯ КАРТА АВТОМАТИЗАЦИИ СФЕРЫ №1
-========================================================================
-                                
-       [ ВХОДНОЙ СИЛОВОЙ КАБЕЛЬ: АРГУМЕНТЫ sys.argv / ТЕРМИНАЛ ]
-                                   │
-                                   ▼
-        ┌─────────────────────────────────────────────────────┐
-        │   ЦЕНТРАЛЬНЫЙ МОНОЛИТ СУБД И КОНТРОЛЛЕР (main.py)   │
-        │ ─────────────────────────────────────────────────── │
-        │  • Пакетный зрячий нано-сканер логов (enumerate)    │
-        │  • Ручной предохранитель холостого такта (raise)    │
-        │  • Бронированный замок сохранения SSD (json.dump)   │
-        │  • СЕО-Движок транзакционного отката (RAM Rollback) │
-        └──────────────────┬──────────────┬───────────────────┘
-                           │              │
-         ┌─────────────────┘              └─────────────────┐
-         │                                                  │
-         ▼                                                  ▼
-┌─────────────────────────────────┐        ┌──────────────────────────────────┐
-│  АНАЛИЗАТОР ЖЕЛЕЗА (sys_info)   │        │   СЕТЕВОЙ СТОРОЖ (net_monitor)   │
-│ ─────────────────────────────── │        │ ──────────────────────────────── │
-│ • Вызов поршней ядра ОС (wmic)  │        │ • Пинг интернет-пакетов (loss/ms)│
-│ • Просчет свободных Гб на SSD  │        │ • Сканер системных крашей ОС     │
-│ • Зрячие Excel-таблицы (CSV)    │        │ • Моментальный пуш логов ошибок  │
-└────────────────┬────────────────┘        └────────────────┬─────────────────┘
-                 │                                          │
-                 └─────────────────┬────────────────────────┘
-                                   │
-                                   ▼
-        ┌─────────────────────────────────────────────────────┐
-        │     АВТОНОМНЫЙ СУВЕРЕННЫЙ ПОИСКОВИК (price_parser)  │
-        │ ─────────────────────────────────────────────────── │
-        │  • Скрытый обход сайтов без цензуры (HTTP Requests) │
-        │  • Выжигание бинарного мусора и HTML-текста в RAM   │
-        │  • Авто-скачивание любых файлов (.pdf/.zip/.exe)    │
-        │  • Фиксация аналитики и выгрузка напрямую в EXCEL   │
-        └─────────────────────────────────────────────────────┘
+# 🛰️ USER MANUAL: CLI CONTROLLER & DBMS (main.py)
 
-# 🛰️ РУКОВОДСТВО ПО ЭКСПЛУАТАЦИИ: CLI-КОНТРОЛЛЕР И СУБД (main.py)
+High-performance console controller and persistent database snapshot manager for main.py with zero external dependencies. Features single-letter atomic RAM arrays, strict validation, 4-mode window filtering, batch token scanning, and an integrated transaction rollback engine. The tool is written in pure Python 3, optimized for minimal RAM footprint, and preserves all persistent arrays inside a local JSON storage (`db.json`) on the SSD.
 
-Высокопроизводительный консольный контроллер и менеджер снимков базы данных со сквозной валидацией диапазонов, пакетным сканированием и встроенным движком транзакционного отката (Rollback Engine). Утилита написана на чистом Python 3 без внешних зависимостей, оптимизирована под минимальное потребление RAM и использует атомарные однобуквенные переменные в оперативной памяти. Данные перманентно запечатываются в локальный JSON-саркофаг `db.json` на SSD.
-
-В систему встроен прецизионный аппаратный профайлер (`time.perf_counter`), который при завершении любой операции выводит в консоль точное время выполнения в миллисекундах.
+The controller includes a high-precision hardware profiler (`time.perf_counter`) that automatically benchmarks every transaction and outputs the exact execution delta in milliseconds (`v ms`) upon termination.
 
 ---
 
-## 📥 РЕЖИМ 1: ПОПОЛНЕНИЕ ПАМЯТИ И ВСТАВКА ДАННЫХ (`-add`)
+## 📥 MODE 1: MEMORY APPEND & CELL INSERTION (`-add`)
 
-Служит для засасывания и сохранения любых текстовых токенов, целых идентификаторов или дробных физических метрик в базу данных.
+Ingests and appends any series of string tokens, integer identifiers, or fractional metrics directly into the persistent database.
 
-*   **Глобальное добавление в хвост массива:**
+*   **Global append to the end of the array storage:**
     ```bash
     python main.py -add token1 token2 99.4 4.22
     ```
-*   **Хирургическая вставка диапазона (`range`) в произвольную точку:**
-    Разрезает текущий массив в RAM и внедряет новые элементы строго на указанную позицию человеческого индекса (начиная с 1), сдвигая последующие данные вправо. Команда вставить токены на позицию №3:
+*   **Surgical range insertion at an arbitrary index:**
+    Slices the active database array in RAM and inserts new elements strictly at the specified 1-based human index position, shifting existing downstream entries to the right. Command to insert tokens at position №3:
     ```bash
     python main.py -add range 3 new_cell_1 new_cell_2
     ```
-*   **Контроль периметра ввода:** Если попытаться отправить пустой ввод в кавычках (`python main.py -add "   "`), генератор списков очистит пробелы методом `.strip()`, полезная длина `n` станет равна `0`, и внутренний детонатор `raise IndexError` принудительно заблокирует запись мусора на SSD, инициировав Rollback.
+*   **Input perimeter verification:** Blank parameters or empty strings wrapped in quotes (`python main.py -add "   "`) are automatically stripped. The internal logic detects that the valid payload count `n` equals `0`, fires a strict `raise IndexError` fuse, aborts the corrupted payload append, and safely routing execution to the rollback sequence.
 
 ---
 
-## 🛰️ РЕЖИМ 2: ПАКЕТНЫЙ ИНТЕЛЛЕКТУАЛЬНЫЙ РАДАР ПОИСКА (`-search`)
+## 🛰️ MODE 2: BATCH INTELLECTUAL SEARCH RADAR (`-search`)
 
-Служит для высокоскоростного пакетного сканирования и чтения данных в RAM в режиме стерильного доступа без мутации исходного JSON-файла.
+Performs high-speed parallel sequence scanning and reads data within RAM under a strict, non-mutating isolated route without modifying the source JSON file on disk.
 
-*   **Глобальный поиск по базе (Слова и Индексы параллельно):**
+*   **Global parallel lookup (Simultaneous index query and string scan):**
     ```bash
     python main.py -search query_word 3 target_token
     ```
-    *   Чистые целые числа (например, `3`) распознаются как прямой запрос ячейки. Программа автоматически сдвигает человеческую координату на такт назад в памяти (`l[h - 1]`) и пулей выводит значение третьей строки.
-    *   Буквенные слова перехватываются капканом `ValueError` и перенаправляются в нано-сканер `enumerate`, который за доли миллисекунды вычисляет точные сквозные адреса (номера строк) всех дубликатов и их общее количество (`TOTAL_COUNT`).
-*   **Экранирование числовых строк (Текстовый маркер `w`):**
-    Если необходимо найти строку, состоящую исключительно из цифр (например, телефонный код, ID объекта или числовой хэш `495`) именно как текстовое слово, а не как номер строки, перед запросом ставится маркер `w`. Алгоритм откусит префикс и пустит цифры напрямую по текстовому рельсу, обходя вылет за границы индексов:
+    *   Pure integer strings (e.g., `3`) are automatically evaluated as absolute index lookups. The system shifts the human-readable coordinate back by one такт (`l[h - 1]`) and instantly extracts the string stored at that precise slot.
+    *   Character-based words fail the initial integer parsing, get intercepted by a `ValueError` trap, and are rerouted into an optimized `enumerate` scanner. It maps the exact 1-based line coordinates of all matching duplicates along with the absolute occurrence calculation (`TOTAL_COUNT`).
+*   **Numeric string escaping (The 'w' word prefix marker):**
+    To scan for a string token comprised entirely of numbers (such as an object ID, area code, or numeric hash like `495`) as a literal text word instead of an index position, prepend the character marker `w`. The algorithm strips the prefix and passes the digits safely into the string matching engine, bypassing index overflow crashes:
     ```bash
     python main.py -search w495
     ```
-*   **Ограниченный поиск внутри выделенного диапазона ячеек (`range`):**
-    Сужает луч сканирования. Ищет совпадения и выводит координаты дубликатов строго внутри указанного окна индексов (например, со 1-й по 10-ю ячейку), полностью игнорируя остальной массив данных:
+*   **Bounded scanning inside a specific index slice window (`range`):**
+    Narrows the scanner beam. Evaluates query tokens and calculates occurrence coordinates strictly within the requested boundary limits (e.g., from row 1 to 10), completely ignoring any database entries outside this active memory frame:
     ```bash
     python main.py -search range 1 10 query_word w495
     ```
 
 ---
 
-## 🪓 РЕЖИМ 3: ХИРУРГИЧЕСКОЕ ВЫЖИГАНИЕ И ЗАЧИСТКА МУСОРА (`-del`)
+## 🪓 MODE 3: SURGICAL PRUNING & SYSTEM STORAGE PURGE (`-del`)
 
-Рычаг управления лимитами жесткого диска. Служит для точечного или массового удаления элементов.
+Provides complete structural control over storage size limitations on the SSD, allowing for pinpoint or mass cell erasures.
 
-*   **Сброс всего накопительного хранилища под абсолютный ноль:**
+*   **Wipe entire persistent database storage array to absolute zero:**
     ```bash
     python main.py -del all
     ```
-*   **Удаление одной конкретной ячейки по её человеческому номеру (например, строка №2):**
+*   **Remove a specific cell via its 1-based human index number (e.g., row №2):**
     ```bash
     python main.py -del cell 2
     ```
-*   **Массовое удаление всех существующих дубликатов слова по совпадению:**
-    Использует фильтрующий генератор списков с оператором `!=`, начисто вырезая мишень из базы:
+*   **Mass purge of all duplicate entries matching a word pattern:**
+    Deploys a list comprehension filter utilizing the `!=` inequality operator, completely cutting out the target word from the database array:
     ```bash
     python main.py -del word query_word
     ```
-*   **Уничтожение выделенного диапазона ячеек из середины базы (например, с 5-й по 8-ю строки):**
-    Склеивает неизменяемые куски базы до и после указанных границ (`l[:x] + l[y:]`), утилизируя промежуток:
+*   **Eradicate a slice window out of the middle of the storage array (e.g., rows 5 through 8):**
+    Stitches together the immutable parts of the storage array before and after the targeted boundaries (`l[:x] + l[y:]`), dropping the middle slice out of memory:
     ```bash
     python main.py -del range 5 8
     ```
 
 ---
 
-## 📊 РЕЖИМ 4: ФИЛЬТРАЦИЯ, ЭКСПОРТ И АНАЛИТИКА МЕТРИК (`-list`)
+## 📊 MODE 4: WINDOW FILTERING, DATA EXPORT & ANALYTICS (`-list`)
 
-Генерирует высокоформатированные списки строк, обёрнутые в квадратные скобки `[]` и кавычки `""`, выводя их на экран и автоматически дублируя чистый результат в файл `list_output.json` на SSD для внешних инструментов автоматизации или Excel.
+Generates highly-formatted sequence arrays wrapped in brackets `[]` and quotes `""`. It prints the filtered structures directly to the terminal while dumping a sterile, raw dataset to `list_output.json` for external script automation pipelines or Excel ingestion.
 
-*   **Выборка определенных существующих слов из поезда запросов:**
-    Программа сопоставляет входящие токены с базой данных и выводит списком только те элементы, которые реально присутствуют в памяти:
+*   **Extract specific target tokens matching an array payload input:**
+    Compares the incoming token chain against the active database and returns an array of elements that actually exist within memory:
     ```bash
     python main.py -list target token1 token2 fake_token
     ```
-*   **Генерация массива из выделенного диапазона ячеек (например, с 3-й по 7-ю строки):**
-    Выхватывает изолированный срез данных из середины базы:
+*   **Generate an array list out of a specific index boundary window (e.g., rows 3 through 7):**
+    Captures an isolated memory frame out of the middle of the database array storage:
     ```bash
     python main.py -list range 3 7
     ```
-*   **Тотальная инфраструктурная аналитика и аудит базы (`stats`):**
-    Просвечивает массив данных через схлопыватель дубликатов `set(l)`, вычисляет уникальные токены и выводит зрячую коммерческую сводку: общий объём, число уникальных записей, количество дубликатов и точный процент замусоренности хранилища:
+*   **Global database infrastructure analytical summary (`stats`):**
+    Scans the database via a unique element collector `set(l)`, maps out unique entries, and processes an immutable data audit report displaying: total log volume, unique record entries, structural duplicate counts, and the precise database redundancy ratio:
     ```bash
     python main.py -list stats
     ```
 
 ---
 
-## 🛡️ СИСТЕМА АВТОМАТИЧЕСКОГО ОТКАТА (TRANSACTION ROLLBACK)
+## 🛡️ CORE TRANSACTION ROLLBACK ARCHITECTURE
 
-Архитектура контроллера спроектирована по стандартам отказоустойчивости Mission-Critical систем. Перед выполнением любой операции в RAM создается изолированный резервный слепок базы `b = l.copy()`. 
+The controller is engineered around the fault-tolerance standards of mission-critical software systems. Prior to executing any database mutation, an isolated memory snapshot clone `b = l.copy()` is established inside RAM.
 
-Если во время записи, удаления, пакетного поиска или урезки диапазонов `range` происходит непредвиденный индексный оверфлоу (вылет за границы реальной длины массива), конфликт типов данных (ввод букв вместо чисел) или сбой суб-флага, программа **не падает в розовый краш**. 
+If an unexpected index overflow error (requesting rows out of bounds), data type mismatch (passing literal strings to index properties), or sub-flag exception occurs during processing, **the system prevents binary file corruption or empty array writes**. 
 
-Глобальный объединенный капкан `except (IndexError, ValueError, KeyError, Exception)` мгновенно перехватывает системный удар, блокирует запись испорченной или пустой RAM-структуры на жесткий диск, прерывает транзакцию и принудительно восстанавливает всю память из чистого стартового слепка `b`. Локальный файл `db.json` всегда остается в физической безопасности и стабильности.
+The global exception cascade `except (IndexError, ValueError, KeyError, Exception)` intercepts the software panic, immediately discards the current transaction route, terminates the corrupted thread, and restores the system array directly from the original backup clone `b`. The persistent `db.json` on the disk remains completely safe, clean, and unaffected.
