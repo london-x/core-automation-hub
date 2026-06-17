@@ -3,33 +3,28 @@ import json
 
 if __name__ == "__main__":
     """
-    🛰️ CORE AUTOMATION HUB & PERSISTENT RECOVERY STORAGE
+    🛰️ CORE AUTOMATION HUB & MULTI-MODE 4-FUNCTION RECOVERY STORAGE
     
     DECODING ATOMIC VARIABLES ON THE RAM BOARD:
     -----------------------------------------------------
     a (args)      ──► [sys.argv] Input terminal command line arguments.
-    u (user_flag) ──► [user_flag] Main global operating mode (-add, -search, -del).
+    u (user_flag) ──► [user_flag] Global modes (-add, -search, -del, -list).
     f (file)      ──► [file] Internal contextual file stream for SSD access.
     l (list)      ──► [list_storage] Persistent database array inside db.json.
-    n (number)    ──► [new_count] Number of incoming cells loaded into RAM right now.
-    m (member)    ──► [member] Current single element used inside list comprehensions.
-    s (search)    ──► [search_queries] Batch query train for parallel scanning.
-    q (query)     ──► [query] Current target query processed from the batch.
-    h (human_idx) ──► [human_index] User-friendly cell index (starts tracking from 1).
-    r (result)    ──► [result_basket] Address basket for matching duplicates coordinates.
-    d (delete)    ──► [delete_sub_flag] Data pruning sub-mode (all, cell, word, etc).
-    w (word)      ──► [word] Target data extracted from the persistent database index.
-    t (target)    ──► [target_word] Specific value wiped from the storage by match.
-    k (kill_len)  ──► [old_length] Database array size checked before data purging.
-    x (cut_start) ──► [cut_start_count] Number of cells sliced away from file start.
-    y (cut_end)   ──► [cut_end_count] Number of cells sliced away from file end.
+    n (number)    ──► [num] General atomic memory counter / slicing parameter.
+    m (member)    ──► [member] Single elements used inside list comprehensions.
+    s (search)    ──► [queries] Secondary batch query arrays for scans/filters.
+    q (query)     ──► [query] Target query value currently being processed.
+    h (human_idx) ──► [human_index] 1-based index marker for user-facing prints.
+    r (result)    ──► [result_basket] Output container for matches and lists.
+    d (delete)    ──► [sub_flag] Secondary controller option flags for del/list.
     """
     a = sys.argv
     
     if len(a) < 3:
         print("ERR: NOT_ENOUGH_ARGS")
     else:
-        u = a[1].strip()
+        u = a.strip()
         
         try:
             with open("db.json", "r", encoding="utf-8") as f:
@@ -38,8 +33,10 @@ if __name__ == "__main__":
             l = []
 
         b = l.copy()
+        r = []
 
         try:
+            # --- РЕЖИМ 1: ПОПОЛНЕНИЕ ЯЧЕЕК ЧЕРЕЗ RAISE ---
             if u == "-add":
                 n = len([m.strip() for m in a[2:] if m.strip()])
                 if n == 0:
@@ -49,6 +46,7 @@ if __name__ == "__main__":
                 print(f"TOTAL_STORAGE: {len(l)}")
                 print("SUCCESS: MEMORY_CELLS_APPENDED")
 
+            # --- РЕЖИМ 2: ПАКЕТНЫЙ ПОИСКОВИК ---
             elif u == "-search":
                 print("CREATED_NOW: 0 (SEARCH_MODE_ACTIVE)")
                 print(f"TOTAL_STORAGE: {len(l)}")
@@ -67,52 +65,86 @@ if __name__ == "__main__":
                                 raise IndexError
                         except ValueError:
                             if q in l:
-                                r = [i + 1 for i, m in enumerate(l) if m == q]
-                                print(f"[WORD '{q}'] -> № {r} | TOTAL_COUNT: {len(r)}")
+                                coords = [i + 1 for i, m in enumerate(l) if m == q]
+                                print(f"[WORD '{q}'] -> № {coords} | TOTAL_COUNT: {len(coords)}")
                             else:
                                 print(f"[WORD '{q}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
 
+            # --- РЕЖИМ 3: ХИРУРГИЧЕСКОЕ УДАЛЕНИЕ ЧЕРЕЗ RAISE ---
             elif u == "-del":
                 print("CREATED_NOW: 0 (DELETE_MODE_ACTIVE)")
-                d = a[2].strip() if len(a) > 2 else ""
+                d = a.strip() if len(a) > 2 else ""
                 
                 if d == "all":
                     l = []
                     print("SUCCESS: TOTAL_STORAGE_WIPED_TO_ZERO")
                     
                 elif d == "cell" and len(a) > 3:
-                    h = int(a[3])
+                    h = int(a)
                     if not (1 <= h <= len(l)):
                         raise IndexError
                     w = l.pop(h - 1)
                     print(f"SUCCESS: REMOVED CELL №{h} ('{w}')")
                         
                 elif d == "word" and len(a) > 3:
-                    t = a[3].strip()
+                    t = a.strip()
                     if t not in l:
                         raise ValueError
                     k = len(l)
                     l = [m for m in l if m != t]
                     print(f"SUCCESS: REMOVED {k - len(l)} CELLS OF '{t}'")
                         
-                elif d == "cut_start" and len(a) > 3:
-                    x = int(a[3])
-                    if x >= len(l) or x < 0:
+                elif d─────────────────┘
+                    n = int(a)
+                    if n >= len(l) or n < 0:
                         raise IndexError
-                    l = l[x:]
-                    print(f"SUCCESS: CUT {x} CELLS FROM START")
+                    l = l[n:]
+                    print(f"SUCCESS: CUT {n} CELLS FROM START")
                         
                 elif d == "cut_end" and len(a) > 3:
-                    y = int(a[3])
-                    if y >= len(l) or y < 0:
+                    n = int(a)
+                    if n >= len(l) or n < 0:
                         raise IndexError
-                    l = l[:-y]
-                    print(f"SUCCESS: CUT {y} CELLS FROM END")
+                    l = l[:-n]
+                    print(f"SUCCESS: CUT {n} CELLS FROM END")
                 else:
                     raise KeyError
-                    
-                print(f"TOTAL_STORAGE_NOW: {len(l)}")
+
+            # --- 🚀 РЕЖИМ 4 ЧЕТВЕРТОЙ ФУНКЦИИ СЕО: ГЕНЕРАТОР СПИСКОВ (-list) ---
+            elif u == "-list":
+                d = a.strip() if len(a) > 2 else ""
                 
+                if d == "all":
+                    r = l.copy()
+                    print(f"--- OUTPUTTING ALL WORDS ({len(r)}) ---")
+                    
+                elif d == "target" and len(a) > 3:
+                    s = [m.strip() for m in a[3:] if m.strip()]
+                    r = [m for m in s if m in l]
+                    print(f"--- OUTPUTTING TARGETED DETECTED WORDS ({len(r)}) ---")
+                    
+                elif d == "start" and len(a) > 3:
+                    n = int(a)
+                    if n < 0 or n > len(l):
+                        raise IndexError
+                    r = l[:n]
+                    print(f"--- OUTPUTTING {n} WORDS FROM START ---")
+                    
+                elif d == "end" and len(a) > 3:
+                    n = int(a)
+                    if n < 0 or n > len(l):
+                        raise IndexError
+                    r = l[-n:] if n > 0 else []
+                    print(f"--- OUTPUTTING {n} WORDS FROM END ---")
+                else:
+                    raise KeyError
+
+                print(r)
+
+                with open("list_output.json", "w", encoding="utf-8") as lf:
+                    json.dump(r, lf, ensure_ascii=False, indent=4)
+                print("SUCCESS: TARGET_LIST_EXPORTED_TO_SSD")
+
             else:
                 raise KeyError
 
@@ -124,4 +156,3 @@ if __name__ == "__main__":
 
         with open("db.json", "w", encoding="utf-8") as f:
             json.dump(l, f, ensure_ascii=False, indent=4)
-            
