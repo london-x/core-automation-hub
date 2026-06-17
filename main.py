@@ -36,7 +36,6 @@ if __name__ == "__main__":
         r = []
 
         try:
-            # --- РЕЖИМ 1: ПОПОЛНЕНИЕ ЯЧЕЕК ЧЕРЕЗ RAISE ---
             if u == "-add":
                 n = len([m.strip() for m in a[2:] if m.strip()])
                 if n == 0:
@@ -46,7 +45,6 @@ if __name__ == "__main__":
                 print(f"TOTAL_STORAGE: {len(l)}")
                 print("SUCCESS: MEMORY_CELLS_APPENDED")
 
-            # --- РЕЖИМ 2: ПАКЕТНЫЙ ПОИСКОВИК ---
             elif u == "-search":
                 print("CREATED_NOW: 0 (SEARCH_MODE_ACTIVE)")
                 print(f"TOTAL_STORAGE: {len(l)}")
@@ -70,7 +68,6 @@ if __name__ == "__main__":
                             else:
                                 print(f"[WORD '{q}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
 
-            # --- РЕЖИМ 3: ХИРУРГИЧЕСКОЕ УДАЛЕНИЕ ЧЕРЕЗ RAISE ---
             elif u == "-del":
                 print("CREATED_NOW: 0 (DELETE_MODE_ACTIVE)")
                 d = a.strip() if len(a) > 2 else ""
@@ -110,7 +107,6 @@ if __name__ == "__main__":
                 else:
                     raise KeyError
 
-            # --- 🚀 РЕЖИМ 4 ЧЕТВЕРТОЙ ФУНКЦИИ СЕО: ГЕНЕРАТОР СПИСКОВ (-list) ---
             elif u == "-list":
                 d = a.strip() if len(a) > 2 else ""
                 
