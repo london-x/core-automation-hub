@@ -6,34 +6,34 @@ if __name__ == "__main__":
     t = time.perf_counter()
 
     """
-    a (args)      ──► [sys.argv] Input terminal command line arguments.
-    u (user_flag) ──► [user_flag] Global modes (-add, -search, -del, -list).
-    f (file)      ──► [file] Internal contextual file stream for SSD access.
-    l (list)      ──► [list_storage] Persistent database array inside db.json.
-    n (number)    ──► [num] General atomic memory counter / slicing parameter.
-    m (member)    ──► [member] Single elements used inside list comprehensions.
-    s (search)    ──► [queries] Secondary batch query arrays for scans/filters.
-    q (query)     ──► [query] Target query value currently being processed.
-    h (human_idx) ──► [human_index] 1-based index marker for user-facing prints.
-    r (result)    ──► [result_basket] Output container for matches and lists.
-    d (delete)    ──► [sub_flag] Secondary controller option flags for del/list.
-    b (backup)    ──► [backup_list] Isolated RAM snapshot clone for transaction rollback.
-    k (raw_s)     ──► [raw_search] Unprocessed incoming slice of command line tokens.
-    p (sub_list)  ──► [sub_list_range] Target chunk sliced from database inside boundaries.
-    c (coords)    ──► [coordinate_basket] Calculated 1-based line markers for duplicates.
-    w (target)    ──► [target_value] String target after dropping character markers.
-    o (list_file) ──► [list_file_stream] Standalone text stream for search dictionary exports.
-    z (time_end)  ──► [time_end] High-precision benchmark marker captured at execution stop.
-    v (ms_delta)  ──► [ms_delta] Final elapsed calculation interval formatted in milliseconds.
-    x (range_start)─► [range_start] Lower limit human index integer for window slicing.
-    y (range_end) ──► [range_end] Upper limit human index integer for window slicing.
+    a (args)        ──► [sys.argv] Input terminal command line arguments.
+    u (user_flag)   ──► [user_flag] Global modes (-add, -search, -del, -list).
+    f (file)        ──► [file] Internal contextual file stream for SSD access.
+    l (list)        ──► [list_storage] Persistent database array inside db.json.
+    n (number)      ──► [num] General atomic memory counter / slicing parameter.
+    m (member)      ──► [member] Single elements used inside list comprehensions.
+    s (search)      ──► [queries] Secondary batch query arrays for scans/filters.
+    q (query)       ──► [query] Target query value currently being processed.
+    h (human_idx)   ──► [human_index] 1-based index marker for user-facing prints.
+    r (result)      ──► [result_basket] Output container for matches and lists.
+    d (delete)      ──► [sub_flag] Secondary controller option flags for del/list.
+    b (backup)      ──► [backup_list] Isolated RAM snapshot clone for rollback.
+    k (raw_s)       ──► [raw_search] Unprocessed incoming slice of command tokens.
+    p (sub_list)    ──► [sub_list_range] Target chunk sliced from database in bounds.
+    c (coords)      ──► [coordinate_basket] Calculated 1-based line markers for dups.
+    w (target)      ──► [target_value] String target after dropping character markers.
+    o (list_file)   ──► [list_file_stream] Standalone text stream for search exports.
+    z (time_end)    ──► [time_end] High-precision benchmark marker captured at stop.
+    v (ms_delta)    ──► [ms_delta] Final elapsed calculation interval in milliseconds.
+    x (range_start) ──► [range_start] Lower limit human index integer for window.
+    y (range_end)   ──► [range_end] Upper limit human index integer for window.
     """
     a = sys.argv
     
     if len(a) < 3:
         print("ERR: NOT_ENOUGH_ARGS")
     else:
-        u = a[1].strip()
+        u = a[1].strip() if len(a) > 1 else ""
         
         try:
             with open("db.json", "r", encoding="utf-8") as f:
@@ -161,6 +161,11 @@ if __name__ == "__main__":
                         raise IndexError
                     l = l[:x] + l[y:]
                     print(f"SUCCESS: WIPED RANGE FROM CELL {x+1} TO {y}")
+
+                elif d == "dups":
+                    n = len(l)
+                    l = list(dict.fromkeys(l))
+                    print(f"SUCCESS: PURGED {n - len(l)} DUPLICATES. BASE IS CLEAN.")
                 else:
                     raise KeyError
                 print(f"TOTAL_STORAGE_NOW: {len(l)}")
@@ -201,14 +206,11 @@ if __name__ == "__main__":
             else:
                 raise KeyError
 
-        except (IndexError, ValueError, KeyError, Exception):
-            print("CRITICAL: LOGIC OR INDEX ERROR DETECTED!")
-            print("TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
-            l = b.copy()
-            print(f"TOTAL_STORAGE_RESTORED: {len(l)}")
+                except (IndexError, ValueError, KeyError, Exception):
+                    print("CRITICAL: LOGIC OR INDEX ERROR DETECTED!")
+                    print("TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
+                    l = b.copy()
+                    print(f"TOTAL_STORAGE_RESTORED: {len(l)}")
 
-        with open("db.json", "w", encoding="utf-8") as f:
-            json.dump(l, f, ensure_ascii=False, indent=4)
-
-        z = time.perf_counter()
-        v = round((z - t) * 1000, 4)
+                with open("db.json", "w", encoding="utf-8") as f:
+                    json.dump(l, f, ensure_ascii=False, indent=4)
