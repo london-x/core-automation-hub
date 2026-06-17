@@ -3,7 +3,7 @@ import json
 
 if __name__ == "__main__":
     """
-    🛰️ HIGH-LOAD WEB4 MULTI-MODE CONTROLLER & PERSISTENT STORAGE
+    🛰️ CORE AUTOMATION HUB & PERSISTENT RECOVERY STORAGE
     
     DECODING ATOMIC VARIABLES ON THE RAM BOARD:
     -----------------------------------------------------
@@ -37,88 +37,91 @@ if __name__ == "__main__":
         except FileNotFoundError:
             l = []
 
-        if u == "-add":
-            n = len([m.strip() for m in a[2:] if m.strip()])
-            print(f"CREATED_NOW: {n}")
-            if n > 0:
+        b = l.copy()
+
+        try:
+            if u == "-add":
+                n = len([m.strip() for m in a[2:] if m.strip()])
+                if n == 0:
+                    raise IndexError
+                print(f"CREATED_NOW: {n}")
                 l.extend([m.strip() for m in a[2:] if m.strip()])
-            print(f"TOTAL_STORAGE: {len(l)}")
-            print("SUCCESS: MEMORY_CELLS_APPENDED")
+                print(f"TOTAL_STORAGE: {len(l)}")
+                print("SUCCESS: MEMORY_CELLS_APPENDED")
 
-        elif u == "-search":
-            print("CREATED_NOW: 0 (SEARCH_MODE_ACTIVE)")
-            print(f"TOTAL_STORAGE: {len(l)}")
-            
-            s = a[2:]
-            if not s:
-                print("ERR: NO_SEARCH_QUERIES_PROVIDED")
-            else:
-                print("--- BATCH SEARCH RESULTS ---")
-                for q in s:
-                    q = q.strip()
-                    try:
-                        h = int(q)
-                        if 1 <= h <= len(l):
-                            print(f"[INDEX {h}] -> {l[h - 1]}")
-                        else:
-                            print(f"[INDEX {h}] -> ERR: OUT_OF_BOUNDS")
-                    except ValueError:
-                        if q in l:
-                            r = [i + 1 for i, m in enumerate(l) if m == q]
-                            print(f"[WORD '{q}'] -> № {r} | TOTAL_COUNT: {len(r)}")
-                        else:
-                            print(f"[WORD '{q}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
+            elif u == "-search":
+                print("CREATED_NOW: 0 (SEARCH_MODE_ACTIVE)")
+                print(f"TOTAL_STORAGE: {len(l)}")
+                s = a[2:]
+                if not s:
+                    print("ERR: NO_SEARCH_QUERIES_PROVIDED")
+                else:
+                    print("--- BATCH SEARCH RESULTS ---")
+                    for q in s:
+                        q = q.strip()
+                        try:
+                            h = int(q)
+                            if 1 <= h <= len(l):
+                                print(f"[INDEX {h}] -> {l[h - 1]}")
+                            else:
+                                raise IndexError
+                        except ValueError:
+                            if q in l:
+                                r = [i + 1 for i, m in enumerate(l) if m == q]
+                                print(f"[WORD '{q}'] -> № {r} | TOTAL_COUNT: {len(r)}")
+                            else:
+                                print(f"[WORD '{q}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
 
-        elif u == "-del":
-            print("CREATED_NOW: 0 (DELETE_MODE_ACTIVE)")
-            d = a[2].strip() if len(a) > 2 else ""
-            
-            if d == "all":
-                l = []
-                print("SUCCESS: TOTAL_STORAGE_WIPED_TO_ZERO")
+            elif u == "-del":
+                print("CREATED_NOW: 0 (DELETE_MODE_ACTIVE)")
+                d = a[2].strip() if len(a) > 2 else ""
                 
-            elif d == "cell" and len(a) > 3:
-                try:
-                    h = int(a[3])
-                    if 1 <= h <= len(l):
-                        w = l.pop(h - 1)
-                        print(f"SUCCESS: REMOVED CELL №{h} ('{w}')")
-                    else:
-                        print("ERR: INVALID_INDEX")
-                except ValueError:
-                    print("ERR: CELL_NUMBER_MUST_BE_INT")
+                if d == "all":
+                    l = []
+                    print("SUCCESS: TOTAL_STORAGE_WIPED_TO_ZERO")
                     
-            elif d == "word" and len(a) > 3:
-                t = a[3].strip()
-                if t in l:
+                elif d == "cell" and len(a) > 3:
+                    h = int(a[3])
+                    if not (1 <= h <= len(l)):
+                        raise IndexError
+                    w = l.pop(h - 1)
+                    print(f"SUCCESS: REMOVED CELL №{h} ('{w}')")
+                        
+                elif d == "word" and len(a) > 3:
+                    t = a[3].strip()
+                    if t not in l:
+                        raise ValueError
                     k = len(l)
                     l = [m for m in l if m != t]
                     print(f"SUCCESS: REMOVED {k - len(l)} CELLS OF '{t}'")
-                else:
-                    print("ERR: WORD_NOT_FOUND")
-                    
-            elif d == "cut_start" and len(a) > 3:
-                try:
+                        
+                elif d == "cut_start" and len(a) > 3:
                     x = int(a[3])
+                    if x >= len(l) or x < 0:
+                        raise IndexError
                     l = l[x:]
                     print(f"SUCCESS: CUT {x} CELLS FROM START")
-                except ValueError:
-                    print("ERR: INVALID_NUMBER")
-                    
-            elif d == "cut_end" and len(a) > 3:
-                try:
+                        
+                elif d == "cut_end" and len(a) > 3:
                     y = int(a[3])
-                    l = l[:-y] if y < len(l) else []
+                    if y >= len(l) or y < 0:
+                        raise IndexError
+                    l = l[:-y]
                     print(f"SUCCESS: CUT {y} CELLS FROM END")
-                except ValueError:
-                    print("ERR: INVALID_NUMBER")
-            else:
-                print("ERR: INVALID_DELETE_SUB_FLAG")
+                else:
+                    raise KeyError
+                    
+                print(f"TOTAL_STORAGE_NOW: {len(l)}")
                 
-            print(f"TOTAL_STORAGE_NOW: {len(l)}")
-            
-        else:
-            print("ERR: INVALID_GLOBAL_FLAG")
+            else:
+                raise KeyError
+
+        except (IndexError, ValueError, KeyError, Exception):
+            print("🚨 CRITICAL: LOGIC OR INDEX ERROR DETECTED!")
+            print("🛡️ TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
+            l = b.copy()
+            print(f"TOTAL_STORAGE_RESTORED: {len(l)}")
 
         with open("db.json", "w", encoding="utf-8") as f:
             json.dump(l, f, ensure_ascii=False, indent=4)
+            
