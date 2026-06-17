@@ -223,4 +223,3 @@ if __name__ == "__main__":
             z = time.perf_counter()
             v = round((z-t) * 1000, 4)
             print(f"PERFORMANCE_BENCHMARK: {v} ms")
-            
