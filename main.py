@@ -3,7 +3,7 @@ import json
 
 if __name__ == "__main__":
     """
-    CORE AUTOMATION HUB & MULTI-MODE 4-FUNCTION RECOVERY STORAGE
+    🛰️ CORE AUTOMATION HUB & MULTI-MODE 4-FUNCTION RECOVERY STORAGE
     
     DECODING ATOMIC VARIABLES ON THE RAM BOARD:
     -----------------------------------------------------
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     if len(a) < 3:
         print("ERR: NOT_ENOUGH_ARGS")
     else:
-        u = a.strip()
+        u = a[1].strip()
         
         try:
             with open("db.json", "r", encoding="utf-8") as f:
@@ -36,6 +36,7 @@ if __name__ == "__main__":
         r = []
 
         try:
+            # --- РЕЖИМ 1: ПОПОЛНЕНИЕ ЯЧЕЕК ЧЕРЕЗ RAISE ---
             if u == "-add":
                 n = len([m.strip() for m in a[2:] if m.strip()])
                 if n == 0:
@@ -45,6 +46,7 @@ if __name__ == "__main__":
                 print(f"TOTAL_STORAGE: {len(l)}")
                 print("SUCCESS: MEMORY_CELLS_APPENDED")
 
+            # --- РЕЖИМ 2: ПАКЕТНЫЙ ПОИСКОВИК С ДЕТЕКЦИЕЙ ТЕКСТОВЫХ ЦИФР ---
             elif u == "-search":
                 print("CREATED_NOW: 0 (SEARCH_MODE_ACTIVE)")
                 print(f"TOTAL_STORAGE: {len(l)}")
@@ -55,51 +57,62 @@ if __name__ == "__main__":
                     print("--- BATCH SEARCH RESULTS ---")
                     for q in s:
                         q = q.strip()
-                        try:
-                            h = int(q)
-                            if 1 <= h <= len(l):
-                                print(f"[INDEX {h}] -> {l[h - 1]}")
+                        
+                        # НАШ КИБЕР-ФИКС: Если запрос начинается с 'w', это принудительно ТЕКСТ
+                        if q.startswith("w") and len(q) > 1:
+                            target_word = q[1:]
+                            if target_word in l:
+                                coords = [i + 1 for i, m in enumerate(l) if m == target_word]
+                                print(f"[WORD '{target_word}'] -> № {coords} | TOTAL_COUNT: {len(coords)}")
                             else:
-                                raise IndexError
-                        except ValueError:
-                            if q in l:
-                                coords = [i + 1 for i, m in enumerate(l) if m == q]
-                                print(f"[WORD '{q}'] -> № {coords} | TOTAL_COUNT: {len(coords)}")
-                            else:
-                                print(f"[WORD '{q}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
+                                print(f"[WORD '{target_word}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
+                        else:
+                            try:
+                                h = int(q)
+                                if 1 <= h <= len(l):
+                                    print(f"[INDEX {h}] -> {l[h - 1]}")
+                                else:
+                                    raise IndexError
+                            except ValueError:
+                                if q in l:
+                                    coords = [i + 1 for i, m in enumerate(l) if m == q]
+                                    print(f"[WORD '{q}'] -> № {coords} | TOTAL_COUNT: {len(coords)}")
+                                else:
+                                    print(f"[WORD '{q}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
 
+            # --- РЕЖИМ 3: ХИРУРГИЧЕСКОЕ УДАЛЕНИЕ ЧЕРЕЗ RAISE ---
             elif u == "-del":
                 print("CREATED_NOW: 0 (DELETE_MODE_ACTIVE)")
-                d = a.strip() if len(a) > 2 else ""
+                d = a[2].strip() if len(a) > 2 else ""
                 
                 if d == "all":
                     l = []
                     print("SUCCESS: TOTAL_STORAGE_WIPED_TO_ZERO")
                     
                 elif d == "cell" and len(a) > 3:
-                    h = int(a)
+                    h = int(a[3])
                     if not (1 <= h <= len(l)):
                         raise IndexError
                     w = l.pop(h - 1)
                     print(f"SUCCESS: REMOVED CELL №{h} ('{w}')")
                         
                 elif d == "word" and len(a) > 3:
-                    t = a.strip()
+                    t = a[3].strip()
                     if t not in l:
                         raise ValueError
                     k = len(l)
                     l = [m for m in l if m != t]
                     print(f"SUCCESS: REMOVED {k - len(l)} CELLS OF '{t}'")
                         
-                elif d─────────────────┘
-                    n = int(a)
+                elif d == "cut_start" and len(a) > 3:
+                    n = int(a[3])
                     if n >= len(l) or n < 0:
                         raise IndexError
                     l = l[n:]
                     print(f"SUCCESS: CUT {n} CELLS FROM START")
                         
                 elif d == "cut_end" and len(a) > 3:
-                    n = int(a)
+                    n = int(a[3])
                     if n >= len(l) or n < 0:
                         raise IndexError
                     l = l[:-n]
@@ -107,8 +120,9 @@ if __name__ == "__main__":
                 else:
                     raise KeyError
 
+            # --- РЕЖИМ 4 ЧЕТВЕРТОЙ ФУНКЦИИ СЕО: ГЕНЕРАТОР СПИСКОВ (-list) ---
             elif u == "-list":
-                d = a.strip() if len(a) > 2 else ""
+                d = a[2].strip() if len(a) > 2 else ""
                 
                 if d == "all":
                     r = l.copy()
@@ -120,14 +134,14 @@ if __name__ == "__main__":
                     print(f"--- OUTPUTTING TARGETED DETECTED WORDS ({len(r)}) ---")
                     
                 elif d == "start" and len(a) > 3:
-                    n = int(a)
+                    n = int(a[3])
                     if n < 0 or n > len(l):
                         raise IndexError
                     r = l[:n]
                     print(f"--- OUTPUTTING {n} WORDS FROM START ---")
                     
                 elif d == "end" and len(a) > 3:
-                    n = int(a)
+                    n = int(a[3])
                     if n < 0 or n > len(l):
                         raise IndexError
                     r = l[-n:] if n > 0 else []
@@ -145,8 +159,8 @@ if __name__ == "__main__":
                 raise KeyError
 
         except (IndexError, ValueError, KeyError, Exception):
-            print("CRITICAL: LOGIC OR INDEX ERROR DETECTED!")
-            print("TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
+            print("🚨 CRITICAL: LOGIC OR INDEX ERROR DETECTED!")
+            print("🛡️ TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
             l = b.copy()
             print(f"TOTAL_STORAGE_RESTORED: {len(l)}")
 
