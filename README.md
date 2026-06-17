@@ -3,7 +3,7 @@ All-in-One high-load CLI automation platform and server combiner. Includes persi
 
 This repository is still under development and will be updated.
 
-# 🛰️ USER MANUAL: CLI CONTROLLER & DBMS (main.py)
+# USER MANUAL: CLI CONTROLLER & DBMS (main.py)
 
 High-performance console controller and persistent database snapshot manager for main.py with zero external dependencies. Features single-letter atomic RAM arrays, strict validation, 4-mode window filtering, batch token scanning, and an integrated transaction rollback engine. The tool is written in pure Python 3, optimized for minimal RAM footprint, and preserves all persistent arrays inside a local JSON storage (`db.json`) on the SSD.
 
@@ -11,7 +11,7 @@ The controller includes a high-precision hardware profiler (`time.perf_counter`)
 
 ---
 
-## 📥 MODE 1: MEMORY APPEND & CELL INSERTION (`-add`)
+## MODE 1: MEMORY APPEND & CELL INSERTION (`-add`)
 
 Ingests and appends any series of string tokens, integer identifiers, or fractional metrics directly into the persistent database.
 
@@ -28,7 +28,7 @@ Ingests and appends any series of string tokens, integer identifiers, or fractio
 
 ---
 
-## 🛰️ MODE 2: BATCH INTELLECTUAL SEARCH RADAR (`-search`)
+## MODE 2: BATCH INTELLECTUAL SEARCH RADAR (`-search`)
 
 Performs high-speed parallel sequence scanning and reads data within RAM under a strict, non-mutating isolated route without modifying the source JSON file on disk.
 
@@ -51,7 +51,7 @@ Performs high-speed parallel sequence scanning and reads data within RAM under a
 
 ---
 
-## 🪓 MODE 3: SURGICAL PRUNING & SYSTEM STORAGE PURGE (`-del`)
+## MODE 3: SURGICAL PRUNING & SYSTEM STORAGE PURGE (`-del`)
 
 Provides complete structural control over storage size limitations on the SSD, allowing for pinpoint or mass cell erasures.
 
@@ -76,7 +76,7 @@ Provides complete structural control over storage size limitations on the SSD, a
 
 ---
 
-## 📊 MODE 4: WINDOW FILTERING, DATA EXPORT & ANALYTICS (`-list`)
+## MODE 4: WINDOW FILTERING, DATA EXPORT & ANALYTICS (`-list`)
 
 Generates highly-formatted sequence arrays wrapped in brackets `[]` and quotes `""`. It prints the filtered structures directly to the terminal while dumping a sterile, raw dataset to `list_output.json` for external script automation pipelines or Excel ingestion.
 
@@ -98,7 +98,7 @@ Generates highly-formatted sequence arrays wrapped in brackets `[]` and quotes `
 
 ---
 
-## 🛡️ CORE TRANSACTION ROLLBACK ARCHITECTURE
+## CORE TRANSACTION ROLLBACK ARCHITECTURE
 
 The controller is engineered around the fault-tolerance standards of mission-critical software systems. Prior to executing any database mutation, an isolated memory snapshot clone `b = l.copy()` is established inside RAM.
 
