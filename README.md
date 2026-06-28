@@ -242,3 +242,45 @@ If you are embedding this utility into automated background tasks (PowerShell lo
 
 *   **Exit Code `0`:** Task executed with 100% success. The storage file is safe, empty, and operational.
 *   **Exit Code `1`:** Critical abort. The input path was empty, invalid, or database access was blocked by the OS kernel.
+
+### `panic_response.py` User Manual
+
+### 1\. Pre-flight Setup
+
+1.  Ensure both **`panic_response.py`** and your database file **`db.json`** are located in the exact same directory.
+2.  The target JSON file must contain a valid dictionary object, for example:
+    
+    json
+    
+        {
+            "id": 1,
+            "status": "stable"
+        }
+        
+    
+    Используйте код с осторожностью.
+    
+
+### 2\. Execution via CLI (CMD / Terminal)
+
+Open your terminal interface directly in the directory containing the files and execute the following command:
+
+bash
+
+    python panic_response.py db.json
+    
+
+Используйте код с осторожностью.
+
+### 3\. Core Mechanics & Panic Triggers
+
+This script implements a strict **Panic & Recover** architectural pattern to guarantee runtime memory safety:
+
+*   **Scenario A: Missing File (Panic Event)**  
+    If you omit the file argument or specify a non-existent path, the script triggers the `panic()` sequence, prints a `CRITICAL` log, and halts execution immediately (`sys.exit(1)`) to safeguard the operating system.
+*   **Scenario B: Broken Syntax (ValueError Recovery)**  
+    If the file is empty or contains corrupted JSON data, the script captures a `ValueError`. It automatically bypasses the crash and injects a secure fallback state `{"status": "fallback", "neurons": 0}` straight into RAM.
+*   **Scenario C: Memory Type Collision (TypeError Barrier)**  
+    If the file is successfully read but contains a JSON array `[]` instead of a dictionary `{}`, the script catches a `TypeError`. It isolates the memory type collision and returns an empty dictionary to prevent system lag.
+*   **RAII Resource Cleanup (`finally` block)**  
+    Regardless of success or failure, the hardware execution bus is guaranteed to trigger the `finally` statement, releasing file streams and printing `SYS: Memory bus cleared`.
