@@ -110,3 +110,38 @@ The controller is engineered around the fault-tolerance standards of mission-cri
 If an unexpected index overflow error (requesting rows out of bounds), data type mismatch (passing literal strings to index properties), or sub-flag exception occurs during processing, the system prevents binary file corruption or empty array writes.
 
 The global exception cascade except (IndexError, ValueError, KeyError, Exception) intercepts the software panic, immediately discards the current transaction route, terminates the corrupted thread, and restores the system array directly from the original backup clone b. The persistent db.json on the disk remains completely safe, clean, and unaffected.
+
+### `booster.py` User Manual
+
+### 1\. Preparation
+
+Ensure that both `booster.py` and your target JSON file (e.g., `db.json`) are located in the exact same directory.
+
+The JSON file must contain valid syntax, for example:
+
+json
+
+    {
+        "id": 1,
+        "status": "active"
+    }
+    
+
+Используйте код с осторожностью.
+
+### 2\. Execution via CLI (CMD / Terminal)
+
+Open your command line interface directly in the directory containing your files and execute the following command:
+
+bash
+
+    python booster.py db.json
+    
+
+Используйте код с осторожностью.
+
+### 3\. Core Mechanics & Technical Workflow
+
+*   **Input Validation:** The script evaluates the command-line arguments. If the file argument is omitted or the specified file does not exist, the script prints an `ERR` message and terminates execution via `sys.exit(1)` to prevent a system crash.
+*   **Data Redundancy:** The script instantly generates an identical backup snapshot file on the disk named `db.json.copy`. This preserves the original data state if the primary file is corrupted.
+*   **Memory Allocation:** The raw text payload is parsed and converted into a live dictionary object directly within the volatile memory (RAM), rendering it ready for immediate high-speed computations.
