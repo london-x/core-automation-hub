@@ -3,6 +3,18 @@ import json
 from pathlib import Path
 from typing import NoReturn
 
+"""
+a = arguments (sys.argv)
+p = path object (Path)
+d = raw text data from file
+c = backup copy path
+x = active file stream
+m = loaded RAM matrix dict
+v = ValueError sensor
+T = TypeError sensor
+E = base Exception catch
+"""
+
 def panic(msg: str) -> NoReturn:
     print(f"CRITICAL: {msg}")
     sys.exit(1)
@@ -18,8 +30,8 @@ def supervisor(p: Path) -> dict:
         panic(f"IO block fail: {error}")
 
     try:
-        s = p.with_suffix(p.suffix + ".copy")
-        with open(s, "w", encoding="utf-8") as x:
+        c = p.with_suffix(p.suffix + ".copy")
+        with open(c, "w", encoding="utf-8") as x:
             x.write(d)
     except Exception as E:
         print(f"WARN: Snapshot write dropped: {E}")
