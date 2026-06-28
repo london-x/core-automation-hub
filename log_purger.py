@@ -4,6 +4,13 @@ import sys
 
 
 def r():
+    """
+    a ──► [sys.argv] Input terminal command line arguments.
+    p ──► [path] Target file path object on SSD.
+    f ──► [file] Internal file stream for disk access.
+    l ──► [list] Stored database array inside RAM.
+    n ──► [num] General atomic memory counter for cells.
+    """
     a = sys.argv
     if len(a) < 2:
         print("ERR: NO_FILE")
