@@ -3,7 +3,6 @@ import json
 from pathlib import Path
 
 """
-MAP:
 a = arguments
 p = path
 f = file
