@@ -6,27 +6,27 @@ if __name__ == "__main__":
     t = time.perf_counter()
 
     """
-    a (args)        ──► [sys.argv] Input terminal command line arguments.
-    u (user_flag)   ──► [user_flag] Global modes (-add, -search, -del, -list).
-    f (file)        ──► [file] Internal contextual file stream for SSD access.
-    l (list)        ──► [list_storage] Persistent database array inside db.json.
-    n (number)      ──► [num] General atomic memory counter / slicing parameter.
-    m (member)      ──► [member] Single elements used inside list comprehensions.
-    s (search)      ──► [queries] Secondary batch query arrays for scans/filters.
-    q (query)       ──► [query] Target query value currently being processed.
-    h (human_idx)   ──► [human_index] 1-based index marker for user-facing prints.
-    r (result)      ──► [result_basket] Output container for matches and lists.
-    d (delete)      ──► [sub_flag] Secondary controller option flags for del/list.
-    b (backup)      ──► [backup_list] Isolated RAM snapshot clone for rollback.
-    k (raw_s)       ──► [raw_search] Unprocessed incoming slice of command tokens.
-    p (sub_list)    ──► [sub_list_range] Target chunk sliced from database in bounds.
-    c (coords)      ──► [coordinate_basket] Calculated 1-based line markers for dups.
-    w (target)      ──► [target_value] String target after dropping character markers.
-    o (list_file)   ──► [list_file_stream] Standalone text stream for search exports.
-    z (time_end)    ──► [time_end] High-precision benchmark marker captured at stop.
-    v (ms_delta)    ──► [ms_delta] Final elapsed calculation interval in milliseconds.
-    x (range_start) ──► [range_start] Lower limit human index integer for window.
-    y (range_end)   ──► [range_end] Upper limit human index integer for window.
+    a (args) = \[sys.argv\] Input terminal command line arguments.  
+    u (user\_flag) = \[user\_flag\] Global modes (-add, -search, -del, -list).  
+    f (file) = \[file\] Internal contextual file stream for SSD access.  
+    l (list) = \[list\_storage\] Persistent database array inside db.json.  
+    n (number) = \[num\] General atomic memory counter / slicing parameter.  
+    m (member) = \[member\] Single elements used inside list comprehensions.  
+    s (search) = \[queries\] Secondary batch query arrays for scans/filters.  
+    q (query) = \[query\] Target query value currently being processed.  
+    h (human\_idx) = \[human\_index\] 1-based index marker for user-facing prints.  
+    r (result) = \[result\_basket\] Output container for matches and lists.  
+    d (delete) = \[sub\_flag\] Secondary controller option flags for del/list.  
+    b (backup) = \[backup\_list\] Isolated RAM snapshot clone for rollback.  
+    k (raw\_s) = \[raw\_search\] Unprocessed incoming slice of command tokens.  
+    p (sub\_list) = \[sub\_list\_range\] Target chunk sliced from database in bounds.  
+    c (coords) = \[coordinate\_basket\] Calculated 1-based line markers for dups.  
+    w (target) = \[target\_value\] String target after dropping character markers.  
+    o (list\_file) = \[list\_file\_stream\] Standalone text stream for search exports.  
+    z (time\_end) = \[time\_end\] High-precision benchmark marker captured at stop.  
+    v (ms\_delta) = \[ms\_delta\] Final elapsed calculation interval in milliseconds.  
+    x (range\_start) = \[range\_start\] Lower limit human index integer for window.  
+    y (range\_end) = \[range\_end\] Upper limit human index integer for window.
     """
     a = sys.argv
     
