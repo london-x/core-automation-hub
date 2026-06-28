@@ -145,3 +145,100 @@ bash
 *   **Input Validation:** The script evaluates the command-line arguments. If the file argument is omitted or the specified file does not exist, the script prints an `ERR` message and terminates execution via `sys.exit(1)` to prevent a system crash.
 *   **Data Redundancy:** The script instantly generates an identical backup snapshot file on the disk named `db.json.copy`. This preserves the original data state if the primary file is corrupted.
 *   **Memory Allocation:** The raw text payload is parsed and converted into a live dictionary object directly within the volatile memory (RAM), rendering it ready for immediate high-speed computations.
+
+### SnapDBMS Log Purger — Official User Manual
+
+High-performance, transaction-safe command-line infrastructure utility designed for automated server maintenance, log rotation, and structural JSON database resetting.
+
+* * *
+
+### 🏗️ HOW IT WORKS (OPERATIONAL MECHANICS)
+
+The utility operates as a dedicated external maintenance node. It evaluates the target database file directly on the SSD disk, calculates the total number of logs, completely wipes all accumulated records, and re-initializes the storage as a clean, sterile JSON skeleton (`[]`) in a single processor tact.
+
+* * *
+
+### 💻 TERMINAL COMMAND SYNTAX & OUTPUT CODES
+
+The tool is managed completely via command-line arguments in your Terminal or Command Prompt.
+
+### Global Command Template
+
+bash
+
+    python log_purger.py [path_to_json_file]
+    
+
+Используйте код с осторожностью.
+
+### 1\. Standard Database Purge
+
+To completely clear your main database or log file, pass its path as the first argument:
+
+bash
+
+    python log_purger.py db.json
+    
+
+Используйте код с осторожностью.
+
+*   **System Action:** Validates file structure, empties all records, and saves a fresh empty database.
+*   **Terminal Output:**
+    *   `db.json` *(Target file confirmed)*
+    *   `37` *(Number of records detected before wipe)*
+    *   `SUCCESS` *(Operation completed safely)*
+*   **OS Exit Code:** `0` (Success)
+
+### 2\. Guardrail: Missing File Argument
+
+If you launch the utility without specifying any target file path:
+
+bash
+
+    python log_purger.py
+    
+
+Используйте код с осторожностью.
+
+*   **System Action:** Instantly cuts power to the process to prevent accidental drive damage.
+*   **Terminal Output:** `ERR: NO_FILE`
+*   **OS Exit Code:** `1` (Aborted)
+
+### 3\. Guardrail: File Not Found
+
+If you provide a path to a file that does not physically exist on your disk:
+
+bash
+
+    python log_purger.py missing_database.json
+    
+
+Используйте код с осторожностью.
+
+*   **System Action:** Blocks execution before touching the drive framework.
+*   **Terminal Output:** `ERR: NOT_FOUND`
+*   **OS Exit Code:** `1` (Aborted)
+
+### 4\. Emergency Auto-Repair Sequence
+
+If you accidentally target a corrupted database, a broken text file, or an invalid `.json` configuration:
+
+bash
+
+    python log_purger.py broken_file.json
+    
+
+Используйте код с осторожностью.
+
+*   **System Action:** Automatically detects structural damage, prevents software freeze, and forces a hard system wipe.
+*   **Terminal Output:** `CRITICAL` *(Corruption intercepted and repaired)*
+*   **OS Exit Code:** `0` (Success — Storage channel is fully restored and ready for new writes)
+
+* * *
+
+### ⚙️ INTEGRATION PROTOCOL FOR AUTOMATION RUNNERS
+
+If you are embedding this utility into automated background tasks (PowerShell loops, Windows Task Scheduler, or Bash runners), use the following operating system exit codes to monitor the system state:
+
+*   **Exit Code `0`:** Task executed with 100% success. The storage file is safe, empty, and operational.
+*   **Exit Code `1`:** Critical abort. The input path was empty, invalid, or database access was blocked by the OS kernel.
