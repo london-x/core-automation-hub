@@ -1,13 +1,13 @@
 import sys
 import json
 from pathlib import Path
-from typing import NoReturn 
+from typing import NoReturn, Union
 
 def panic(msg: str) -> NoReturn:
     print(f"CRITICAL: {msg}")
     sys.exit(1) 
 
-def supervisor(path: Path) -> dict:
+def supervisor(path: Path) -> Union[dict, list]:
     if not path.exists():
         panic(f"File {path.name} missing") 
 
@@ -31,8 +31,8 @@ def supervisor(path: Path) -> dict:
 
         res = json.loads(data) 
 
-        if not isinstance(res, dict):
-            raise TypeError("Matrix must parse strictly as dict object") 
+        if not isinstance(res, (dict, list)):
+            raise TypeError("Matrix must parse strictly as dict or list object") 
 
         return res 
 
