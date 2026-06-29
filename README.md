@@ -127,7 +127,6 @@ json
     }
     
 
-Используйте код с осторожностью.
 
 ### 2\. Execution via CLI (CMD / Terminal)
 
@@ -137,8 +136,6 @@ bash
 
     python booster.py db.json
     
-
-Используйте код с осторожностью.
 
 ### 3\. Core Mechanics & Technical Workflow
 
@@ -152,13 +149,13 @@ High-performance, transaction-safe command-line infrastructure utility designed 
 
 * * *
 
-### 🏗️ HOW IT WORKS (OPERATIONAL MECHANICS)
+###  HOW IT WORKS (OPERATIONAL MECHANICS)
 
 The utility operates as a dedicated external maintenance node. It evaluates the target database file directly on the SSD disk, calculates the total number of logs, completely wipes all accumulated records, and re-initializes the storage as a clean, sterile JSON skeleton (`[]`) in a single processor tact.
 
 * * *
 
-### 💻 TERMINAL COMMAND SYNTAX & OUTPUT CODES
+###  TERMINAL COMMAND SYNTAX & OUTPUT CODES
 
 The tool is managed completely via command-line arguments in your Terminal or Command Prompt.
 
@@ -169,7 +166,6 @@ bash
     python log_purger.py [path_to_json_file]
     
 
-Используйте код с осторожностью.
 
 ### 1\. Standard Database Purge
 
@@ -180,7 +176,6 @@ bash
     python log_purger.py db.json
     
 
-Используйте код с осторожностью.
 
 *   **System Action:** Validates file structure, empties all records, and saves a fresh empty database.
 *   **Terminal Output:**
@@ -198,7 +193,6 @@ bash
     python log_purger.py
     
 
-Используйте код с осторожностью.
 
 *   **System Action:** Instantly cuts power to the process to prevent accidental drive damage.
 *   **Terminal Output:** `ERR: NO_FILE`
@@ -213,7 +207,6 @@ bash
     python log_purger.py missing_database.json
     
 
-Используйте код с осторожностью.
 
 *   **System Action:** Blocks execution before touching the drive framework.
 *   **Terminal Output:** `ERR: NOT_FOUND`
@@ -228,7 +221,6 @@ bash
     python log_purger.py broken_file.json
     
 
-Используйте код с осторожностью.
 
 *   **System Action:** Automatically detects structural damage, prevents software freeze, and forces a hard system wipe.
 *   **Terminal Output:** `CRITICAL` *(Corruption intercepted and repaired)*
@@ -236,7 +228,7 @@ bash
 
 * * *
 
-### ⚙️ INTEGRATION PROTOCOL FOR AUTOMATION RUNNERS
+###  INTEGRATION PROTOCOL FOR AUTOMATION RUNNERS
 
 If you are embedding this utility into automated background tasks (PowerShell loops, Windows Task Scheduler, or Bash runners), use the following operating system exit codes to monitor the system state:
 
@@ -258,7 +250,6 @@ If you are embedding this utility into automated background tasks (PowerShell lo
         }
         
     
-    Используйте код с осторожностью.
     
 
 ### 2\. Execution via CLI (CMD / Terminal)
@@ -270,7 +261,6 @@ bash
     python panic_response.py db.json
     
 
-Используйте код с осторожностью.
 
 ### 3\. Core Mechanics & Panic Triggers
 
