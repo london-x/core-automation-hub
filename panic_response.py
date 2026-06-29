@@ -3,58 +3,70 @@ import json
 from pathlib import Path
 from typing import NoReturn, Union
 
+
 def panic(msg: str) -> NoReturn:
     print(f"CRITICAL: {msg}")
-    sys.exit(1) 
+    sys.exit(1)
+
 
 def supervisor(path: Path) -> Union[dict, list]:
     if not path.exists():
-        panic(f"File {path.name} missing") 
+        panic(f"File {path.name} missing")
 
     data = ""
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = f.read()
     except (OSError, IOError) as err:
-        panic(f"IO block fail: {err}") 
+        panic(f"IO block fail: {err}")
 
     try:
         bak = path.with_suffix(path.suffix + ".copy")
         with open(bak, "w", encoding="utf-8") as f:
             f.write(data)
     except Exception as err:
-        print(f"WARN: Snapshot write dropped: {err}") 
+        print(f"WARN: Snapshot write dropped: {err}")
 
     try:
         if not data.strip():
-            raise ValueError("Empty data string") 
+            raise ValueError("Empty data string")
 
-        res = json.loads(data) 
+        res = json.loads(data)
 
         if not isinstance(res, (dict, list)):
-            raise TypeError("Matrix must parse strictly as dict or list object") 
+            raise TypeError("Matrix must parse strictly as dict or list object")
 
-        return res 
+        return res
+
+    except KeyError as err:
+        print(f"RECOVERY [KeyError]: Missing required structural key object! Log: {err}")
+        return {"status": "missing_key_error"}
+
+    except IndexError as err:
+        print(f"RECOVERY [IndexError]: Matrix sequence index out of bounds! Log: {err}")
+        return []
 
     except ValueError as err:
         print(f"RECOVERY [ValueError]: Payload data corruption. Log: {err}")
-        return {"status": "fallback", "neurons": 0} 
+        return {"status": "fallback", "neurons": 0}
 
     except TypeError as err:
         print(f"RECOVERY [TypeError]: Runtime memory block type collision! Log: {err}")
-        return {} 
+        return {}
 
     except Exception as err:
         print(f"RECOVERY [Exception]: Unidentified runtime hazard caught: {err}")
-        return {} 
+        return {}
 
     finally:
-        print(f"SYS: Memory bus cleared for target: {path.name}") 
+        del data
+        print(f"SYS: Memory bus cleared for target: {path.name}")
+
 
 if __name__ == "__main__":
     args = sys.argv
     if len(args) < 2:
-        panic("Launcher usage pattern: python script.py <target.json>") 
+        panic("Launcher usage pattern: python script.py <target.json>")
 
     target_path = Path(args[1])
     active_matrix = supervisor(target_path)
