@@ -12,15 +12,15 @@ if not path.exists():
     print(f"ERR: {path} not found")
     sys.exit(1)
 
-with open(path, "r", encoding="utf-8") as file:
-    data = file.read()
+with open(path, "r", encoding="utf-8") as f_in:
+    data = f_in.read()
 
-copy = path.with_suffix(path.suffix + ".copy")
-with open(copy, "w", encoding="utf-8") as copy_file:
-    copy_file.write(data)
+copy_path = path.with_suffix(path.suffix + ".copy")
+with open(copy_path, "w", encoding="utf-8") as f_out:
+    f_out.write(data)
 
 matrix = json.loads(data)
 
 print(f"OK: {path.name}")
-print(f"CP: {copy.name}")
+print(f"CP: {copy_path.name}")
 print(matrix)
