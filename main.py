@@ -3,210 +3,189 @@ import json
 import time
 
 if __name__ == "__main__":
-    t = time.perf_counter()
-
-    """
-    a (args) = \[sys.argv\] Input terminal command line arguments.  
-    u (user\_flag) = \[user\_flag\] Global modes (-add, -search, -del, -list).  
-    f (file) = \[file\] Internal contextual file stream for SSD access.  
-    l (list) = \[list\_storage\] Persistent database array inside db.json.  
-    n (number) = \[num\] General atomic memory counter / slicing parameter.  
-    m (member) = \[member\] Single elements used inside list comprehensions.  
-    s (search) = \[queries\] Secondary batch query arrays for scans/filters.  
-    q (query) = \[query\] Target query value currently being processed.  
-    h (human\_idx) = \[human\_index\] 1-based index marker for user-facing prints.  
-    r (result) = \[result\_basket\] Output container for matches and lists.  
-    d (delete) = \[sub\_flag\] Secondary controller option flags for del/list.  
-    b (backup) = \[backup\_list\] Isolated RAM snapshot clone for rollback.  
-    k (raw\_s) = \[raw\_search\] Unprocessed incoming slice of command tokens.  
-    p (sub\_list) = \[sub\_list\_range\] Target chunk sliced from database in bounds.  
-    c (coords) = \[coordinate\_basket\] Calculated 1-based line markers for dups.  
-    w (target) = \[target\_value\] String target after dropping character markers.  
-    o (list\_file) = \[list\_file\_stream\] Standalone text stream for search exports.  
-    z (time\_end) = \[time\_end\] High-precision benchmark marker captured at stop.  
-    v (ms\_delta) = \[ms\_delta\] Final elapsed calculation interval in milliseconds.  
-    x (range\_start) = \[range\_start\] Lower limit human index integer for window.  
-    y (range\_end) = \[range\_end\] Upper limit human index integer for window.
-    """
-    a = sys.argv
+    start_time = time.perf_counter()
+    args = sys.argv
     
-    if len(a) < 3:
+    if len(args) < 3:
         print("ERR: NOT_ENOUGH_ARGS")
     else:
-        u = a[1].strip() if len(a) > 1 else ""
+        mode = args[1].strip() if len(args) > 1 else ""
         
         try:
-            with open("db.json", "r", encoding="utf-8") as f:
-                l = json.load(f)
+            with open("db.json", "r", encoding="utf-8") as f_in:
+                db = json.load(f_in)
         except FileNotFoundError:
-            l = []
+            db = []
 
-        b = l.copy()
-        r = []
+        backup = db.copy()
+        res = []
 
         try:
-            if u == "-add":
-                d = a[2].strip() if len(a) > 2 else ""
+            if mode == "-add":
+                dele = args[2].strip() if len(args) > 2 else ""
                 
-                def parse(v):
-                    try: return int(v)
+                def parse(val):
+                    try: 
+                        return int(val)
                     except ValueError:
-                        try: return float(v)
-                        except ValueError: return v
+                        try: 
+                            return float(val)
+                        except ValueError: 
+                            return val
 
-                if d == "range" and len(a) > 4:
-                    h = int(a[3]) - 1
-                    if h < 0 or h > len(l):
+                if dele == "range" and len(args) > 4:
+                    human_idx = int(args[3]) - 1
+                    if human_idx < 0 or human_idx > len(db):
                         raise IndexError
-                    s = [parse(m.strip()) for m in a[4:] if m.strip()]
-                    if not s:
+                    queries = [parse(member.strip()) for member in args[4:] if member.strip()]
+                    if not queries:
                         raise IndexError
-                    l = l[:h] + s + l[h:]
-                    print(f"SUCCESS: INSERTED {len(s)} CELLS AT POSITION {h + 1}")
+                    db = db[:human_idx] + queries + db[human_idx:]
+                    print(f"SUCCESS: INSERTED {len(queries)} CELLS AT POSITION {human_idx + 1}")
                 else:
-                    k = a[2:] if d != "range" else a[4:]
-                    s = [parse(m.strip()) for m in k if m.strip()]
-                    n = len(s)
-                    if n == 0:
+                    raw_args = args[2:] if dele != "range" else args[4:]
+                    queries = [parse(member.strip()) for member in raw_args if member.strip()]
+                    num = len(queries)
+                    if num == 0:
                         raise IndexError
-                    print(f"CREATED_NOW: {n}")
-                    l.extend(s)
+                    print(f"CREATED_NOW: {num}")
+                    db.extend(queries)
                     print("SUCCESS: MEMORY_CELLS_APPENDED")
-                print(f"TOTAL_STORAGE: {len(l)}")
+                print(f"TOTAL_STORAGE: {len(db)}")
 
-            elif u == "-search":
+            elif mode == "-search":
                 print("CREATED_NOW: 0 (SEARCH_MODE_ACTIVE)")
-                print(f"TOTAL_STORAGE: {len(l)}")
+                print(f"TOTAL_STORAGE: {len(db)}")
                 
-                d = a[2].strip() if len(a) > 2 else ""
+                dele = args[2].strip() if len(args) > 2 else ""
                 
-                if d == "range" and len(a) > 5:
-                    x = int(a[3]) - 1
-                    y = int(a[4])
-                    if x < 0 or y > len(l) or x >= y:
+                if dele == "range" and len(args) > 5:
+                    start_idx = int(args[3]) - 1
+                    end_idx = int(args[4])
+                    if start_idx < 0 or end_idx > len(db) or start_idx >= end_idx:
                         raise IndexError
-                    s = a[5:]
-                    p = l[x:y]
-                    print(f"--- BATCH SEARCH RESULTS WITHIN RANGE {x+1} TO {y} ---")
-                    for q in s:
-                        q = q.strip()
-                        if q.startswith("w") and len(q) > 1:
-                            w = q[1:]
-                            if w in p:
-                                c = [i + 1 + x for i, m in enumerate(p) if w == m]
-                                print(f"[WORD '{w}'] -> № {c} | TOTAL_COUNT: {len(c)}")
+                    queries = args[5:]
+                    db_slice = db[start_idx:end_idx]
+                    print(f"--- BATCH SEARCH RESULTS WITHIN RANGE {start_idx+1} TO {end_idx} ---")
+                    for query in queries:
+                        query = query.strip()
+                        if query.startswith("w") and len(query) > 1:
+                            word = query[1:]
+                            if word in db_slice:
+                                matches = [i + 1 + start_idx for i, member in enumerate(db_slice) if word == member]
+                                print(f"[WORD '{word}'] -> № {matches} | TOTAL_COUNT: {len(matches)}")
                             else:
-                                print(f"[WORD '{w}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
+                                print(f"[WORD '{word}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
                         else:
                             try:
-                                h = int(q)
-                                if x + 1 <= h <= y:
-                                    print(f"[INDEX {h}] -> {l[h - 1]}")
+                                human_idx = int(query)
+                                if start_idx + 1 <= human_idx <= end_idx:
+                                    print(f"[INDEX {human_idx}] -> {db[human_idx - 1]}")
                                 else:
-                                    print(f"[INDEX {h}] -> ERR: OUT_OF_SEARCH_RANGE")
+                                    print(f"[INDEX {human_idx}] -> ERR: OUT_OF_SEARCH_RANGE")
                             except ValueError:
-                                if q in p:
-                                    c = [i + 1 + x for i, m in enumerate(p) if q == m]
-                                    print(f"[WORD '{q}'] -> № {c} | TOTAL_COUNT: {len(c)}")
+                                if query in db_slice:
+                                    matches = [i + 1 + start_idx for i, member in enumerate(db_slice) if query == member]
+                                    print(f"[WORD '{query}'] -> № {matches} | TOTAL_COUNT: {len(matches)}")
                                 else:
-                                    print(f"[WORD '{q}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
+                                    print(f"[WORD '{query}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
                 else:
-                    s = a[2:] if d != "range" else a[5:]
-                    if not s:
+                    queries = args[2:] if dele != "range" else args[5:]
+                    if not queries:
                         print("ERR: NO_SEARCH_QUERIES_PROVIDED")
                     else:
                         print("--- BATCH GLOBAL SEARCH RESULTS ---")
-                        for q in s:
-                            q = q.strip()
-                            if q.startswith("w") and len(q) > 1:
-                                w = q[1:]
-                                if w in l:
-                                    c = [i + 1 for i, m in enumerate(l) if w == m]
-                                    print(f"[WORD '{w}'] -> № {c} | TOTAL_COUNT: {len(c)}")
+                        for query in queries:
+                            query = query.strip()
+                            if query.startswith("w") and len(query) > 1:
+                                word = query[1:]
+                                if word in db:
+                                    matches = [i + 1 for i, member in enumerate(db) if word == member]
+                                    print(f"[WORD '{word}'] -> № {matches} | TOTAL_COUNT: {len(matches)}")
                                 else:
-                                    print(f"[WORD '{w}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
+                                    print(f"[WORD '{word}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
                             else:
                                 try:
-                                    h = int(q)
-                                    if 1 <= h <= len(l):
-                                        print(f"[INDEX {h}] -> {l[h - 1]}")
+                                    human_idx = int(query)
+                                    if 1 <= human_idx <= len(db):
+                                        print(f"[INDEX {human_idx}] -> {db[human_idx - 1]}")
                                     else:
                                         raise IndexError
                                 except ValueError:
-                                    if q in l:
-                                        c = [i + 1 for i, m in enumerate(l) if q == m]
-                                        print(f"[WORD '{q}'] -> № {c} | TOTAL_COUNT: {len(c)}")
+                                    if query in db:
+                                        matches = [i + 1 for i, member in enumerate(db) if query == member]
+                                        print(f"[WORD '{query}'] -> № {matches} | TOTAL_COUNT: {len(matches)}")
                                     else:
-                                        print(f"[WORD '{q}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
+                                        print(f"[WORD '{query}'] -> TOTAL_COUNT: 0 (NOT_FOUND)")
 
-            elif u == "-del":
+            elif mode == "-del":
                 print("CREATED_NOW: 0 (DELETE_MODE_ACTIVE)")
-                d = a[2].strip() if len(a) > 2 else ""
+                dele = args[2].strip() if len(args) > 2 else ""
                 
-                if d == "all":
-                    l = []
+                if dele == "all":
+                    db = []
                     print("SUCCESS: TOTAL_STORAGE_WIPED_TO_ZERO")
                     
-                elif d == "cell" and len(a) > 3:
-                    h = int(a[3])
-                    if not (1 <= h <= len(l)):
+                elif dele == "cell" and len(args) > 3:
+                    human_idx = int(args[3])
+                    if not (1 <= human_idx <= len(db)):
                         raise IndexError
-                    w = l.pop(h - 1)
-                    print(f"SUCCESS: REMOVED CELL №{h} ('{w}')")
+                    word = db.pop(human_idx - 1)
+                    print(f"SUCCESS: REMOVED CELL №{human_idx} ('{word}')")
                         
-                elif d == "word" and len(a) > 3:
-                    w = a[3].strip()
-                    n = len(l)
-                    l = [m for m in l if w != m]
-                    print(f"SUCCESS: REMOVED {n - len(l)} CELLS MATCHING '{w}'")
+                elif dele == "word" and len(args) > 3:
+                    word = args[3].strip()
+                    num = len(db)
+                    db = [member for member in db if word != member]
+                    print(f"SUCCESS: REMOVED {num - len(db)} CELLS MATCHING '{word}'")
 
-                elif d == "range" and len(a) > 4:
-                    x = int(a[3]) - 1
-                    y = int(a[4])
-                    if x < 0 or y > len(l) or x >= y:
+                elif dele == "range" and len(args) > 4:
+                    start_idx = int(args[3]) - 1
+                    end_idx = int(args[4])
+                    if start_idx < 0 or end_idx > len(db) or start_idx >= end_idx:
                         raise IndexError
-                    l = l[:x] + l[y:]
-                    print(f"SUCCESS: WIPED RANGE FROM CELL {x+1} TO {y}")
+                    db = db[:start_idx] + db[end_idx:]
+                    print(f"SUCCESS: WIPED RANGE FROM CELL {start_idx+1} TO {end_idx}")
 
-                elif d == "dups":
-                    n = len(l)
-                    l = list(dict.fromkeys(l))
-                    print(f"SUCCESS: PURGED {n - len(l)} DUPLICATES. BASE IS CLEAN.")
+                elif dele == "dups":
+                    num = len(db)
+                    db = list(dict.fromkeys(db))
+                    print(f"SUCCESS: PURGED {num - len(db)} DUPLICATES. BASE IS CLEAN.")
                 else:
                     raise KeyError
-                print(f"TOTAL_STORAGE_NOW: {len(l)}")
+                print(f"TOTAL_STORAGE_NOW: {len(db)}")
 
-            elif u == "-list":
-                d = a[2].strip() if len(a) > 2 else ""
+            elif mode == "-list":
+                dele = args[2].strip() if len(args) > 2 else ""
                 
-                if d == "target" and len(a) > 3:
-                    s = [m.strip() for m in a[3:] if m.strip()]
-                    r = [m for m in l if m in s]
-                    print(f"--- OUTPUTTING TARGETED DETECTED WORDS ({len(r)}) ---")
+                if dele == "target" and len(args) > 3:
+                    queries = [member.strip() for member in args[3:] if member.strip()]
+                    res = [member for member in db if member in queries]
+                    print(f"--- OUTPUTTING TARGETED DETECTED WORDS ({len(res)}) ---")
                     
-                elif d == "range" and len(a) > 4:
-                    x = int(a[3]) - 1
-                    y = int(a[4])
-                    if x < 0 or y > len(l) or x >= y:
+                elif dele == "range" and len(args) > 4:
+                    start_idx = int(args[3]) - 1
+                    end_idx = int(args[4])
+                    if start_idx < 0 or end_idx > len(db) or start_idx >= end_idx:
                         raise IndexError
-                    r = l[x:y]
-                    print(f"--- OUTPUTTING RANGE FROM CELL {x+1} TO {y} ---")
+                    res = db[start_idx:end_idx]
+                    print(f"--- OUTPUTTING RANGE FROM CELL {start_idx+1} TO {end_idx} ---")
 
-                elif d == "stats":
-                    n = len(l)
+                elif dele == "stats":
+                    num = len(db)
                     print("--- DATABASE INFRASTRUCTURE METRICS ---")
-                    print(f"TOTAL_LOGS_ACCUMULATED : {n}")
-                    print(f"UNIQUE_MEMORY_ENTRIES  : {len(set(l))}")
-                    print(f"DUPLICATE_CELLS_FOUND  : {n - len(set(l))}")
-                    print(f"DATABASE_TRASH_RATIO   : {round(((n - len(set(l))) / n) * 100, 2) if n > 0 else 0}%")
-                    r = {"total": n, "unique": len(set(l)), "duplicates": n - len(set(l)), "trash_percent": round(((n - len(set(l))) / n) * 100, 2) if n > 0 else 0}
+                    print(f"TOTAL_LOGS_ACCUMULATED : {num}")
+                    print(f"UNIQUE_MEMORY_ENTRIES  : {len(set(db))}")
+                    print(f"DUPLICATE_CELLS_FOUND  : {num - len(set(db))}")
+                    print(f"DATABASE_TRASH_RATIO   : {round(((num - len(set(db))) / num) * 100, 2) if num > 0 else 0}%")
+                    res = {"total": num, "unique": len(set(db)), "duplicates": num - len(set(db)), "trash_percent": round(((num - len(set(db))) / num) * 100, 2) if num > 0 else 0}
                 else:
                     raise KeyError
 
-                print(r)
+                print(res)
 
-                with open("list_output.json", "w", encoding="utf-8") as o:
-                    json.dump(r, o, ensure_ascii=False, indent=4)
+                with open("list_output.json", "w", encoding="utf-8") as f_out:
+                    json.dump(res, f_out, ensure_ascii=False, indent=4)
                 print("SUCCESS: TARGET_LIST_EXPORTED_TO_SSD")
 
             else:
@@ -215,12 +194,12 @@ if __name__ == "__main__":
         except (IndexError, ValueError, KeyError, Exception):
             print("CRITICAL: LOGIC OR INDEX ERROR DETECTED!")
             print("TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
-            l = b.copy()
-            print(f"TOTAL_STORAGE_RESTORED: {len(l)}")
+            db = backup.copy()
+            print(f"TOTAL_STORAGE_RESTORED: {len(db)}")
 
-        with open("db.json", "w", encoding="utf-8") as f:
-            json.dump(l, f, ensure_ascii=False, indent=4)
+        with open("db.json", "w", encoding="utf-8") as f_out:
+            json.dump(db, f_out, ensure_ascii=False, indent=4)
 
-    z = time.perf_counter()
-    v = round((z - t) * 1000, 4)
-    print(f"PERFORMANCE_BENCHMARK: {v} ms")
+    end_time = time.perf_counter()
+    elapsed_ms = round((end_time - start_time) * 1000, 4)
+    print(f"PERFORMANCE_BENCHMARK: {elapsed_ms} ms")
