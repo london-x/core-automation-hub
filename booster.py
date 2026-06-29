@@ -19,8 +19,11 @@ copy_path = path.with_suffix(path.suffix + ".copy")
 with open(copy_path, "w", encoding="utf-8") as f_out:
     f_out.write(data)
 
-matrix = json.loads(data)
-
-print(f"OK: {path.name}")
-print(f"CP: {copy_path.name}")
-print(matrix)
+try:
+    matrix = json.loads(data)
+    print(f"OK: {path.name}")
+    print(f"CP: {copy_path.name}")
+    print(matrix)
+except json.JSONDecodeError:
+    print(f"ERR: File {path.name} contains invalid JSON structure. Backup still created.")
+    sys.exit(1)
