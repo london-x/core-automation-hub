@@ -274,3 +274,61 @@ This script implements a strict **Panic & Recover** architectural pattern to gua
     If the file is successfully read but contains a JSON array `[]` instead of a dictionary `{}`, the script catches a `TypeError`. It isolates the memory type collision and returns an empty dictionary to prevent system lag.
 *   **RAII Resource Cleanup (`finally` block)**  
     Regardless of success or failure, the hardware execution bus is guaranteed to trigger the `finally` statement, releasing file streams and printing `SYS: Memory bus cleared`.
+
+### `file_supervisor.py` Technical Documentation
+
+### Overview
+
+**`file_supervisor.py`** is a native batch file validation and infrastructure monitoring tool designed for Python 3.11+. It processes multiple target configuration or database JSON files sequentially, catches individual system failures without immediate termination, and processes multi-source errors concurrently using modern exception handling features.
+
+### Core Features
+
+*   **Fault-Tolerant Scanning:** Individual file crashes do not halt the global execution queue.
+*   **Modern Error Aggregation:** Leverages native `ExceptionGroup` mechanisms to bundle discrete system anomalies into a single manageable payload.
+*   **Concurrence Routing:** Utilizes `except*` block splitting to trigger dedicated micro-recovery protocols based on exact exception criteria (File Missing vs. Data Corruption vs. Type Collision).
+
+* * *
+
+### Architectural Pipeline & Flow
+
+### 1\. Ingestion Phase
+
+The script scans a predefined target matrix of critical data nodes:
+
+python
+
+    target_files = ["db.json", "matrix.json", "logs.json"]
+    
+
+Используйте код с осторожностью.
+
+### 2\. Validation Stage (3-Tier Security Inspection)
+
+Each target is checked via sequential validation vectors:
+
+*   **FS Boundary Check (`IndexError`):** Confirms if the file exists on the physical hard drive path.
+*   **Payload Sanity Check (`ValueError`):** Confirms if the text buffer contains valid non-empty data strings.
+*   **Contract Specification Check (`TypeError`):** Confirms if `json.loads` parses correctly as an actionable iterable (`dict` or `list`).
+
+### 3\. Aggregation Stage
+
+All failures bypass script crash parameters and are safely stored inside a dedicated runtime array: `collected_errors`.
+
+### 4\. Routing Stage (The `except*` Bus)
+
+If anomalies exist, an `ExceptionGroup` is forced into the system bus. The logic splits execution pathways on a type-basis:
+
+*   `except* IndexError` → Logs missing paths and triggers infrastructure file generation templates.
+*   `except* ValueError` → Intercepts blank data and triggers fresh state snapshot recovery from cloud storage.
+*   `except* TypeError` → Intercepts wrong schema structural designs and flags matrix reformatting pipelines.
+
+### 5\. Ultimate Cleanup Phase
+
+The `finally` block resolves unconditionally across all outcomes, resetting infrastructure state and clearing temporary RAM caches.
+
+* * *
+
+### Technical Specifications
+
+*   **Runtime Requirement:** Python 3.11 or higher (strictly required for syntax compiling).
+*   **Dependencies:** Zero third-party dependencies. Powered by standard libraries (`json`, `sys`, `pathlib`).
