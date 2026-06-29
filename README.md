@@ -376,3 +376,55 @@ The execution cleanup track enforces permanent file persistence before system sh
 
 *   **`success_log.json`**: Pristine ledger ledger entries cleared for settlement transactions.
 *   **`errors_log.json`**: Corrupt metadata payloads, failure track names, and debug traces for system review.
+
+### User Manual: infrastructure\_provisioner.py
+
+### 1\. CREATE MODE (3+ Args)
+
+Creates a directory tree and generates a file with any extension and text content.
+
+bash
+
+    python infrastructure_provisioner.py core/logs info.txt "Log payload text"
+    
+
+Используйте код с осторожностью.
+
+*   **Output:**
+    
+    text
+    
+        CREATED
+        SIZE_BYTES: 16
+        
+    
+    Используйте код с осторожностью.
+    
+
+### 2\. INSPECT MODE (1 Arg)
+
+Calculates the exact size of a file or an entire directory in bytes.
+
+bash
+
+    python infrastructure_provisioner.py core
+    
+
+Используйте код с осторожностью.
+
+*   **Output:**
+    
+    text
+    
+        TYPE: FOLDER
+        TARGET_PATH: core
+        SIZE_BYTES: 12480
+        
+    
+    Используйте код с осторожностью.
+    
+
+### 3\. SYSTEM EXIT CODES
+
+*   `0` — Success. Operation finished without errors.
+*   `1` — Abort. Path not found, or missing arguments.
