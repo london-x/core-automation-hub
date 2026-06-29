@@ -180,8 +180,9 @@ if __name__ == "__main__":
                     print(f"DUPLICATE_CELLS_FOUND  : {num - len(set(db))}")
                     print(f"DATABASE_TRASH_RATIO   : {round(((num - len(set(db))) / num) * 100, 2) if num > 0 else 0}%")
                     res = {"total": num, "unique": len(set(db)), "duplicates": num - len(set(db)), "trash_percent": round(((num - len(set(db))) / num) * 100, 2) if num > 0 else 0}
+                    
                 else:
-                    raise KeyError
+                    raise ValueError("Unknown sub-mode provided")
 
                 print(res)
 
@@ -190,17 +191,19 @@ if __name__ == "__main__":
                 print("SUCCESS: TARGET_LIST_EXPORTED_TO_SSD")
 
             else:
-                raise KeyError
+                raise ValueError("Invalid global mode selected")
 
         except Exception as err:
             print(f"CRITICAL: LOGIC OR INDEX ERROR DETECTED! ({type(err).__name__})")
             print("TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
             db = copy.deepcopy(backup)
             print(f"TOTAL_STORAGE_RESTORED: {len(db)}")
-
-        with open("db.json", "w", encoding="utf-8") as f_out:
-            json.dump(db, f_out, ensure_ascii=False, indent=4)
-
-    end_time = time.perf_counter()
-    elapsed_ms = round((end_time - start_time) * 1000, 4)
-    print(f"PERFORMANCE_BENCHMARK: {elapsed_ms} ms")
+            
+        finally:
+            with open("db.json", "w", encoding="utf-8") as f_out:
+                json.dump(db, f_out, ensure_ascii=False, indent=4)
+            
+            end_time = time.perf_counter()
+            elapsed_ms = round((end_time - start_time) * 1000, 4)
+            print(f"PERFORMANCE_BENCHMARK: {elapsed_ms} ms")
+            print("SYS: All file buffers flushed to SSD safely.")
