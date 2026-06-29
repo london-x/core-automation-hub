@@ -1,6 +1,7 @@
 import sys
 import json
 import time
+import copy
 
 if __name__ == "__main__":
     start_time = time.perf_counter()
@@ -14,10 +15,10 @@ if __name__ == "__main__":
         try:
             with open("db.json", "r", encoding="utf-8") as f_in:
                 db = json.load(f_in)
-        except FileNotFoundError:
+        except (FileNotFoundError, json.JSONDecodeError):
             db = []
 
-        backup = db.copy()
+        backup = copy.deepcopy(db)
         res = []
 
         try:
@@ -191,10 +192,10 @@ if __name__ == "__main__":
             else:
                 raise KeyError
 
-        except (IndexError, ValueError, KeyError, Exception):
-            print("CRITICAL: LOGIC OR INDEX ERROR DETECTED!")
+        except Exception as err:
+            print(f"CRITICAL: LOGIC OR INDEX ERROR DETECTED! ({type(err).__name__})")
             print("TRANSACTION ABORTED -> ACTIVATING ROLLBACK FUNCTION...")
-            db = backup.copy()
+            db = copy.deepcopy(backup)
             print(f"TOTAL_STORAGE_RESTORED: {len(db)}")
 
         with open("db.json", "w", encoding="utf-8") as f_out:
