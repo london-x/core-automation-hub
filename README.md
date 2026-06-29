@@ -332,3 +332,47 @@ The `finally` block resolves unconditionally across all outcomes, resetting infr
 
 *   **Runtime Requirement:** Python 3.11 or higher (strictly required for syntax compiling).
 *   **Dependencies:** Zero third-party dependencies. Powered by standard libraries (`json`, `sys`, `pathlib`).
+
+### `transaction_processor.py` Technical Reference Manual
+
+### Purpose
+
+The script acts as a fault-tolerant financial ledger gatekeeper. It ingests banking data arrays, separates clean operations from malicious fraud requests, and logs execution traces into isolated tracking repositories without freezing the parent infrastructure.
+
+* * *
+
+### Technical Baseline
+
+*   **Interpreter Target:** Python 3.10 or higher
+*   **Dependencies:** Zero external libraries (Standard standard `json`, `sys`, `pathlib` engine packages only)
+
+* * *
+
+### Structural Data Pipeline
+
+### 1\. Inbound Ingestion Guard
+
+The execution stack mounts path elements and performs hardware checks:
+
+*   Verifies file footprints on the drive grid. Triggers terminal lockdown if targets are missing.
+*   Bounds file stream context buffers inside safe, non-leaking operational envelopes.
+*   Automatically serializes raw string vectors into accessible dictionary objects.
+
+### 2\. Multi-Branch Pattern Routing
+
+Every isolated array dictionary entity faces deep pattern inspections:
+
+*   **Approved Node:** Operations matching success criteria and carrying positive values clear the gateway.
+*   **Banking Refusal Node:** Explicitly logged external drops route into anomaly buffers.
+*   **Malicious Inversion Node:** Broken definitions or fuzzing inputs fall into the global fallback boundary trap.
+
+### 3\. Assertion Boundary Fuse
+
+An absolute logical constraint evaluates core transaction attributes. Negative tracking identifiers trigger internal system exceptions, breaking corrupt execution paths to secure downstream registry storage integrity.
+
+### 4\. Split Logging Persistence
+
+The execution cleanup track enforces permanent file persistence before system shutdown:
+
+*   **`success_log.json`**: Pristine ledger ledger entries cleared for settlement transactions.
+*   **`errors_log.json`**: Corrupt metadata payloads, failure track names, and debug traces for system review.
