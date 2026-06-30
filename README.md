@@ -428,3 +428,47 @@ bash
 
 *   `0` — Success. Operation finished without errors.
 *   `1` — Abort. Path not found, or missing arguments.
+
+### User Manual: log\_accelerator.py
+
+High-speed RAM buffer and ring timer engine with zero-copy `memoryview` layout.
+
+### 1\. RUN COMMAND
+
+Execute the high-load automation runner loops inside your terminal environment:
+
+bash
+
+    python log_accelerator.py
+    
+
+Используйте код с осторожностью.
+
+### 2\. SYSTEM ARCHITECTURE
+
+*   Uses `io.BytesIO` as a dynamic data ingestion engine in memory to protect local hardware storage from write fatigue.
+*   Keeps a persistent execution path open via non-blocking asynchronous clock metrics.
+*   Fires an operational pipeline call on the `60.0` seconds barrier to clear RAM segments.
+*   Maps byte segments directly via `memoryview` handlers to parse logs without creating data duplicates.
+*   Offloads pipeline outputs into `tempfile` paths inside `core/` to safely discard scratch arrays.
+*   Routes verified structured logs into `core/production_data/` paths under file keys ready for extraction.
+
+### 3\. EXPECTED TERMINAL RUNTIME OUTPUT
+
+text
+
+    HIGH-SPEED RING TIMER WITH MEMORYVIEW ACTIVATED...
+    
+    [TRIGGER] 60 SECONDS PASSED. PACKET ANALYSIS VIA RAM...
+    TEMP CONVEYER DEPLOYED: tmpx7y8z9.tmp
+    PRODUCTION OUTFLOW SECURED: excel_ready_1782823190.log
+    TEMP GARBAGE PURGED SUCCESSFULLY
+    RESETTING TIMER. NEW 60 SECONDS INTERVAL STARTED!
+    
+
+Используйте код с осторожностью.
+
+### 4\. APPLICATION RETURN STATUS FLAGS
+
+*   `0` — Clean exit status. Task execution sequence reached target parameters.
+*   `1` — Process abort. Critical fault encountered in data layers or hardware access pools.
