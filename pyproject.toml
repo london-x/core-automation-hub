@@ -9,7 +9,7 @@ description = "All-in-One high-load CLI automation platform and server combiner"
 readme = "README.md"
 requires-python = ">=3.14"
 authors = [
-    { name = "Kislitsyn Artem Sergeevich" }
+    { name = "london-x" }
 ]
 dependencies = [
     "ruff>=0.15.20",
