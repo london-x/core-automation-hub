@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "custom-cli-tool"
+version = "0.1.0"
+description = "Universal Windows CMD custom command template"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Developer" }
+]
+dependencies = [
+    "ruff>=0.3.0",
+]
+
+[project.scripts]
+mycmd = "cli_runner:main_entry"
