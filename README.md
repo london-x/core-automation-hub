@@ -472,3 +472,56 @@ text
 
 *   `0` — Clean exit status. Task execution sequence reached target parameters.
 *   `1` — Process abort. Critical fault encountered in data layers or hardware access pools.
+
+### User Manual: Custom CMD Command Package
+
+A minimalist, high-speed Python CLI package configuration layout built on the modern PEP 621 standard. This manifest maps custom terminal commands directly to isolated execution paths without modifying the core software database.
+
+### 1\. TARGET FILE INTEGRATION
+
+To implement your custom terminal command layout, locate and extract only these two specific target files from the project repository:
+
+*   **pyproject.toml** — Configuration Sarcophagus. Contains the build backend protocols and defines the custom global command keyword link for the Windows kernel.
+*   **cli\_runner.py** — Isolated Command Executable Gate. Houses the core functional entry point, argument interceptors, and case routing logic.
+
+*Note: The existing main.py file represents the locked database core and must be bypassed entirely during this operation.*
+
+### 2\. REPOSITORY ALLOCATION
+
+Deposit both extracted assets directly into the absolute root path of your targeted development directory:
+
+text
+
+    your_project_root/     
+    ├── pyproject.toml     <--- Insert directly here
+    └── cli_runner.py      <--- Insert directly here
+    
+
+Используйте код с осторожностью.
+
+### 3\. TERMINAL ACTIVATION SEQUENCE
+
+Execute these execution steps inside the Windows CMD terminal from your root project path to initialize the command symlink:
+
+bash
+
+    pip install -e .
+    
+
+Используйте код с осторожностью.
+
+This deploys the system link. You can now execute your newly mapped command globally from any block address on your machine:
+
+bash
+
+    mycmd
+    mycmd check
+    mycmd run "Target_Data_Payload"
+    
+
+Используйте код с осторожностью.
+
+### 4\. SYSTEM STATUS FLAGS
+
+*   0 — Operation cleared. Terminal pipeline executed safely.
+*   1 — Process abort. Critical fault encountered in data layers.
